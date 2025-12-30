@@ -1,0 +1,26 @@
+# WordPress
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build files
+*.zip
+*.tar.gz
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+

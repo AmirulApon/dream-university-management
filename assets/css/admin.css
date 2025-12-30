@@ -1,0 +1,253 @@
+/**
+ * Admin styles for Dream University Management
+ */
+
+.dum-dashboard {
+	margin-top: 20px;
+}
+
+.dum-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 20px;
+	margin-bottom: 30px;
+}
+
+.dum-stat-card {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.dum-stat-icon {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 15px;
+	font-size: 30px;
+	color: #fff;
+}
+
+.dum-stat-icon.students {
+	background: #2271b1;
+}
+
+.dum-stat-icon.teachers {
+	background: #00a32a;
+}
+
+.dum-stat-icon.staff {
+	background: #d63638;
+}
+
+.dum-stat-icon.courses {
+	background: #f0b849;
+}
+
+.dum-stat-content h3 {
+	margin: 0 0 5px 0;
+	font-size: 28px;
+	font-weight: 600;
+}
+
+.dum-stat-content p {
+	margin: 0 0 10px 0;
+	color: #646970;
+}
+
+.dum-stat-link {
+	color: #2271b1;
+	text-decoration: none;
+}
+
+.dum-stat-link:hover {
+	text-decoration: underline;
+}
+
+.dum-quick-actions {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px;
+	margin-top: 20px;
+}
+
+.dum-quick-actions h2 {
+	margin-top: 0;
+}
+
+.dum-action-buttons {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.dum-status {
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.dum-status.active {
+	background: #00a32a;
+	color: #fff;
+}
+
+.dum-status.inactive {
+	background: #d63638;
+	color: #fff;
+}
+
+.dum-status.enrolled {
+	background: #2271b1;
+	color: #fff;
+}
+
+.dum-status.completed {
+	background: #00a32a;
+	color: #fff;
+}
+
+.dum-status.pending {
+	background: #f0b849;
+	color: #fff;
+}
+
+.dum-cgpa-result {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px;
+	margin: 20px 0;
+}
+
+.dum-cgpa-value {
+	font-size: 32px;
+	font-weight: 700;
+	color: #2271b1;
+}
+
+.dum-reports {
+	margin-top: 20px;
+}
+
+.dum-reports h2 {
+	margin-top: 30px;
+}
+
+.required {
+	color: #d63638;
+}
+
+/* Enrollment table improvements */
+.wp-list-table.column-student,
+.wp-list-table.column-student-name,
+.wp-list-table.column-course-code,
+.wp-list-table.column-course-name {
+	min-width: 120px;
+}
+
+.wp-list-table.column-credits {
+	width: 80px;
+	text-align: center;
+}
+
+.wp-list-table.column-date {
+	width: 120px;
+}
+
+.wp-list-table.column-status {
+	width: 100px;
+}
+
+.wp-list-table.column-actions {
+	width: 100px;
+}
+
+.wp-list-table .delete {
+	color: #b32d2e;
+}
+
+.wp-list-table .delete:hover {
+	color: #dc3232;
+}
+
+/* Search box styling */
+.dum-search-box {
+	margin: 15px 0;
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+}
+
+.dum-search-box .search-box {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.dum-search-box .search-box input[type="search"] {
+	width: 300px;
+	max-width: 100%;
+}
+
+.dum-search-box .search-box select {
+	height: 30px;
+	padding: 0 8px;
+}
+
+.dum-search-box .search-box .button {
+	margin-left: 0;
+}
+
+/* Responsive table improvements */
+@media screen and (max-width: 782px) {
+	.wp-list-table .column-student,
+	.wp-list-table .column-student-name,
+	.wp-list-table .column-course-code,
+	.wp-list-table .column-course-name,
+	.wp-list-table .column-credits,
+	.wp-list-table .column-date,
+	.wp-list-table .column-status,
+	.wp-list-table .column-actions {
+		display: block;
+		width: 100%;
+	}
+	
+	.dum-search-box .search-box {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	
+	.dum-search-box .search-box input[type="search"],
+	.dum-search-box .search-box select {
+		width: 100%;
+	}
+}
+
+/* Image preview and upload */
+.dum-image-preview img {
+	max-width: 150px;
+	height: auto;
+	border: 1px solid #ddd;
+	padding: 5px;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.wp-list-table img {
+	border-radius: 4px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
