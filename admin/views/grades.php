@@ -202,7 +202,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 						<option value="completed" <?php selected( $status_filter, 'completed' ); ?>><?php esc_html_e( 'Completed', 'dream-university-management' ); ?></option>
 						<option value="pending" <?php selected( $status_filter, 'pending' ); ?>><?php esc_html_e( 'Pending', 'dream-university-management' ); ?></option>
 					</select>
-					<?php submit_button( __( 'Search', 'dream-university-management' ), 'button', '', false ); ?>
+					<?php submit_button( esc_html__( 'Search', 'dream-university-management' ), 'button', '', false ); ?>
 					<?php if ( ! empty( $search ) || $status_filter !== 'all' ) : ?>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-grades' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
 					<?php endif; ?>
@@ -218,6 +218,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<table class="wp-list-table widefat fixed striped table-view-list">
 				<thead>
 					<tr>
+						<th scope="col"><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Student', 'dream-university-management' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Course', 'dream-university-management' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Midterm', 'dream-university-management' ); ?></th>
@@ -232,38 +233,39 @@ if ( $action === 'add' || $action === 'edit' ) {
 				<tbody id="the-list">
 				<?php if ( empty( $grades ) ) : ?>
 					<tr>
-						<td colspan="9"><?php esc_html_e( 'No grades found.', 'dream-university-management' ); ?></td>
+						<td colspan="10"><?php esc_html_e( 'No grades found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $grades as $grade ) : ?>
 						<?php
 						// Handle column names properly
-						$student_id = ! empty( $grade->student_id ) ? esc_html( $grade->student_id ) : __( 'N/A', 'dream-university-management' );
+						$student_id = ! empty( $grade->student_id ) ? esc_html( $grade->student_id ) : esc_html__( 'N/A', 'dream-university-management' );
 						$student_name = '';
 						if ( ! empty( $grade->student_first_name ) && ! empty( $grade->student_last_name ) ) {
 							$student_name = esc_html( $grade->student_first_name . ' ' . $grade->student_last_name );
 						} else {
-							$student_name = __( 'N/A', 'dream-university-management' );
+							$student_name = esc_html__( 'N/A', 'dream-university-management' );
 						}
-						$course_code = ! empty( $grade->course_code ) ? esc_html( $grade->course_code ) : __( 'N/A', 'dream-university-management' );
-						$course_name = ! empty( $grade->course_name ) ? esc_html( $grade->course_name ) : __( 'N/A', 'dream-university-management' );
+						$course_code = ! empty( $grade->course_code ) ? esc_html( $grade->course_code ) : esc_html__( 'N/A', 'dream-university-management' );
+						$course_name = ! empty( $grade->course_name ) ? esc_html( $grade->course_name ) : esc_html__( 'N/A', 'dream-university-management' );
 						$midterm = ! empty( $grade->midterm_marks ) ? esc_html( $grade->midterm_marks ) : '0';
 						$final = ! empty( $grade->final_marks ) ? esc_html( $grade->final_marks ) : '0';
 						$assignment = ! empty( $grade->assignment_marks ) ? esc_html( $grade->assignment_marks ) : '0';
 						$total = ! empty( $grade->total_marks ) ? esc_html( $grade->total_marks ) : '0';
-						$grade_letter = ! empty( $grade->grade ) ? esc_html( $grade->grade ) : __( 'N/A', 'dream-university-management' );
+						$grade_letter = ! empty( $grade->grade ) ? esc_html( $grade->grade ) : esc_html__( 'N/A', 'dream-university-management' );
 						$grade_point = ! empty( $grade->grade_point ) ? esc_html( $grade->grade_point ) : '0.00';
 						$grade_id = ! empty( $grade->id ) ? intval( $grade->id ) : 0;
 						?>
 						<tr>
-							<td><?php echo $student_id . ' - ' . $student_name; ?></td>
-							<td><?php echo $course_code . ' - ' . $course_name; ?></td>
-							<td><?php echo $midterm; ?></td>
-							<td><?php echo $final; ?></td>
-							<td><?php echo $assignment; ?></td>
-							<td><strong><?php echo $total; ?></strong></td>
-							<td><strong><?php echo $grade_letter; ?></strong></td>
-							<td><strong><?php echo $grade_point; ?></strong></td>
+							<td><strong><?php echo esc_html( $grade_id ); ?></strong></td>
+							<td><?php echo esc_html( $student_id . ' - ' . $student_name ); ?></td>
+							<td><?php echo esc_html( $course_code . ' - ' . $course_name ); ?></td>
+							<td><?php echo esc_html( $midterm ); ?></td>
+							<td><?php echo esc_html( $final ); ?></td>
+							<td><?php echo esc_html( $assignment ); ?></td>
+							<td><strong><?php echo esc_html( $total ); ?></strong></td>
+							<td><strong><?php echo esc_html( $grade_letter ); ?></strong></td>
+							<td><strong><?php echo esc_html( $grade_point ); ?></strong></td>
 							<td>
 								<?php if ( $grade_id > 0 ) : ?>
 									<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-grades&action=edit&id=' . $grade_id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |

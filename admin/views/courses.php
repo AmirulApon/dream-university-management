@@ -110,7 +110,10 @@ if ( $action === 'add' || $action === 'edit' ) {
 							<option value=""><?php esc_html_e( 'Select', 'dream-university-management' ); ?></option>
 							<?php for ( $i = 1; $i <= 12; $i++ ) : ?>
 								<option value="<?php echo esc_attr( $i ); ?>" <?php echo $course && $course->semester == $i ? 'selected' : ''; ?>>
-									<?php echo esc_html( sprintf( __( 'Semester %d', 'dream-university-management' ), $i ) ); ?>
+									<?php
+									/* translators: %d: Semester number */
+									echo esc_html( sprintf( __( 'Semester %d', 'dream-university-management' ), $i ) );
+									?>
 								</option>
 							<?php endfor; ?>
 						</select>
@@ -159,7 +162,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 						data: {
 							action: 'dum_get_departments',
 							faculty_id: facultyId,
-							nonce: '<?php echo wp_create_nonce( 'dum_get_departments' ); ?>'
+							nonce: '<?php echo esc_js( wp_create_nonce( 'dum_get_departments' ) ); ?>'
 						},
 						success: function(response) {
 							if (response.success && response.data) {
@@ -222,6 +225,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
+					<th><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Course Code', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Course Name', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Credits', 'dream-university-management' ); ?></th>
@@ -235,7 +239,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<tbody>
 				<?php if ( empty( $courses ) ) : ?>
 					<tr>
-						<td colspan="8"><?php esc_html_e( 'No courses found.', 'dream-university-management' ); ?></td>
+						<td colspan="9"><?php esc_html_e( 'No courses found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $courses as $course ) : ?>
@@ -264,12 +268,16 @@ if ( $action === 'add' || $action === 'edit' ) {
 						}
 						?>
 						<tr>
+							<td><strong><?php echo esc_html( $course->id ); ?></strong></td>
 							<td><?php echo esc_html( $course->course_code ); ?></td>
 							<td><?php echo esc_html( $course->course_name ); ?></td>
 							<td><?php echo esc_html( $course->credits ); ?></td>
 							<td><?php echo esc_html( $faculty_name ? $faculty_name : '-' ); ?></td>
 							<td><?php echo esc_html( $department_name ? $department_name : '-' ); ?></td>
-							<td><?php echo esc_html( $course->semester ? sprintf( __( 'Semester %s', 'dream-university-management' ), $course->semester ) : '-' ); ?></td>
+							<td><?php
+							/* translators: %s: Semester number */
+							echo esc_html( $course->semester ? sprintf( __( 'Semester %s', 'dream-university-management' ), $course->semester ) : '-' );
+							?></td>
 							<td>
 								<span class="dum-status <?php echo esc_attr( $course->status ); ?>">
 									<?php echo esc_html( ucfirst( $course->status ) ); ?>

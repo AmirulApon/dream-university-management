@@ -187,7 +187,7 @@ class DUM_Enrollment {
 		check_admin_referer( 'dum_add_enrollment' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$student_id = intval( $_POST['student_id'] );
@@ -195,16 +195,16 @@ class DUM_Enrollment {
 		
 		// Check if already enrolled
 		if ( self::is_enrolled( $student_id, $course_id ) ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-enrollments&message=duplicate' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-enrollments&message=duplicate' ) );
 			exit;
 		}
 		
 		$result = self::add( $_POST );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-enrollments&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-enrollments&message=added' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-enrollments&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-enrollments&message=error' ) );
 		}
 		exit;
 	}
@@ -216,16 +216,16 @@ class DUM_Enrollment {
 		check_admin_referer( 'dum_delete_enrollment' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_GET['id'] );
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-enrollments&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-enrollments&message=deleted' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-enrollments&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-enrollments&message=error' ) );
 		}
 		exit;
 	}

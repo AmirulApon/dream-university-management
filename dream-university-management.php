@@ -4,15 +4,15 @@
  * Plugin URI: https://wordpress.org/plugins/dream-university-management
  * Description: A comprehensive university management system for WordPress. Manage students, teachers, staff, courses, enrollments, and calculate CGPA.
  * Version: 1.0.0
- * Author: Your Name
- * Author URI: https://yourwebsite.com
+ * Author: Dream Carnival
+ * Author URI: https://profiles.wordpress.org/dreamscarnival/
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: dream-university-management
  * Domain Path: /languages
- * Requires at least: 5.0
- * Tested up to: 6.4
- * Requires PHP: 7.2
+ * Requires at least: 6.3
+ * Tested up to: 6.9
+ * Requires PHP: 7.4
  */
 
 // Exit if accessed directly
@@ -57,8 +57,6 @@ class Dream_University_Management {
 	 * Initialize plugin
 	 */
 	private function init() {
-		// Load plugin textdomain
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 		
 		// Include required files
 		$this->includes();
@@ -69,13 +67,6 @@ class Dream_University_Management {
 		// Register activation and deactivation hooks
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
-	}
-	
-	/**
-	 * Load plugin textdomain
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain( 'dream-university-management', false, dirname( DUM_PLUGIN_BASENAME ) . '/languages' );
 	}
 	
 	/**
@@ -93,6 +84,7 @@ class Dream_University_Management {
 		require_once DUM_PLUGIN_DIR . 'includes/class-dum-enrollment.php';
 		require_once DUM_PLUGIN_DIR . 'includes/class-dum-grade.php';
 		require_once DUM_PLUGIN_DIR . 'includes/class-dum-cgpa.php';
+		require_once DUM_PLUGIN_DIR . 'includes/class-dum-frontend.php';
 	}
 	
 	/**
@@ -106,6 +98,9 @@ class Dream_University_Management {
 		if ( is_admin() ) {
 			DUM_Admin::get_instance();
 		}
+		
+		// Initialize frontend
+		DUM_Frontend::get_instance();
 		
 		// Initialize management classes
 		DUM_Faculty::get_instance();

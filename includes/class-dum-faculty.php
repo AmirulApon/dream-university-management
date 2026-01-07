@@ -168,15 +168,15 @@ class DUM_Faculty {
 		check_admin_referer( 'dum_add_faculty' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$result = self::add( $_POST );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-faculties&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=added' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
 		}
 		exit;
 	}
@@ -188,16 +188,16 @@ class DUM_Faculty {
 		check_admin_referer( 'dum_edit_faculty' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_POST['faculty_id'] );
 		$result = self::update( $id, $_POST );
 		
 		if ( $result !== false ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-faculties&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=updated' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
 		}
 		exit;
 	}
@@ -209,16 +209,16 @@ class DUM_Faculty {
 		check_admin_referer( 'dum_delete_faculty' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_GET['id'] );
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-faculties&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=deleted' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
 		}
 		exit;
 	}

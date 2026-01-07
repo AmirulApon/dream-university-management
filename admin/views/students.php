@@ -191,7 +191,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 						data: {
 							action: 'dum_get_departments',
 							faculty_id: facultyId,
-							nonce: '<?php echo wp_create_nonce( 'dum_get_departments' ); ?>'
+							nonce: '<?php echo esc_js( wp_create_nonce( 'dum_get_departments' ) ); ?>'
 						},
 						success: function(response) {
 							if (response.success && response.data) {
@@ -254,6 +254,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
+					<th><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Photo', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Student ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Name', 'dream-university-management' ); ?></th>
@@ -269,7 +270,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<tbody>
 				<?php if ( empty( $students ) ) : ?>
 					<tr>
-						<td colspan="10"><?php esc_html_e( 'No students found.', 'dream-university-management' ); ?></td>
+						<td colspan="11"><?php esc_html_e( 'No students found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $students as $student ) : ?>
@@ -287,9 +288,10 @@ if ( $action === 'add' || $action === 'edit' ) {
 						$image_url = ! empty( $student->image ) ? esc_url( $student->image ) : '';
 						?>
 						<tr>
+							<td><strong><?php echo esc_html( $student->id ); ?></strong></td>
 							<td>
 								<?php if ( $image_url ) : ?>
-									<img src="<?php echo $image_url; ?>" alt="<?php echo esc_attr( $student->first_name . ' ' . $student->last_name ); ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+									<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $student->first_name . ' ' . $student->last_name ); ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
 								<?php else : ?>
 									<span class="dashicons dashicons-admin-users" style="font-size: 40px; color: #ccc;"></span>
 								<?php endif; ?>

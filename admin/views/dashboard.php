@@ -91,6 +91,103 @@ $course_count = DUM_Course::count();
 				</a>
 			</div>
 		</div>
+		
+		<div class="dum-dashboard-shortcodes">
+			<h2>
+				<?php esc_html_e( 'Frontend Shortcodes', 'dream-university-management' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-shortcodes' ) ); ?>" class="button button-secondary">
+					<?php esc_html_e( 'View All Shortcodes', 'dream-university-management' ); ?>
+				</a>
+			</h2>
+			<p><?php esc_html_e( 'Use these shortcodes to display university data on your website. Click the copy button to copy any shortcode.', 'dream-university-management' ); ?></p>
+			<div class="dum-dashboard-shortcodes-grid">
+				<div class="dum-dashboard-shortcode-item">
+					<h4><?php esc_html_e( 'Faculties', 'dream-university-management' ); ?></h4>
+					<div class="dum-shortcode-box">
+						<code id="dash-shortcode-faculties">[dum_faculties]</code>
+						<button class="dum-copy-btn" data-copy="dash-shortcode-faculties" title="<?php esc_attr_e( 'Copy to clipboard', 'dream-university-management' ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+						</button>
+					</div>
+				</div>
+				<div class="dum-dashboard-shortcode-item">
+					<h4><?php esc_html_e( 'Students', 'dream-university-management' ); ?></h4>
+					<div class="dum-shortcode-box">
+						<code id="dash-shortcode-students">[dum_students]</code>
+						<button class="dum-copy-btn" data-copy="dash-shortcode-students" title="<?php esc_attr_e( 'Copy to clipboard', 'dream-university-management' ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+						</button>
+					</div>
+				</div>
+				<div class="dum-dashboard-shortcode-item">
+					<h4><?php esc_html_e( 'Teachers', 'dream-university-management' ); ?></h4>
+					<div class="dum-shortcode-box">
+						<code id="dash-shortcode-teachers">[dum_teachers]</code>
+						<button class="dum-copy-btn" data-copy="dash-shortcode-teachers" title="<?php esc_attr_e( 'Copy to clipboard', 'dream-university-management' ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+						</button>
+					</div>
+				</div>
+				<div class="dum-dashboard-shortcode-item">
+					<h4><?php esc_html_e( 'Courses', 'dream-university-management' ); ?></h4>
+					<div class="dum-shortcode-box">
+						<code id="dash-shortcode-courses">[dum_courses]</code>
+						<button class="dum-copy-btn" data-copy="dash-shortcode-courses" title="<?php esc_attr_e( 'Copy to clipboard', 'dream-university-management' ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+						</button>
+					</div>
+				</div>
+				<div class="dum-dashboard-shortcode-item">
+					<h4><?php esc_html_e( 'Grades', 'dream-university-management' ); ?></h4>
+					<div class="dum-shortcode-box">
+						<code id="dash-shortcode-grades">[dum_grades]</code>
+						<button class="dum-copy-btn" data-copy="dash-shortcode-grades" title="<?php esc_attr_e( 'Copy to clipboard', 'dream-university-management' ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+						</button>
+					</div>
+				</div>
+				<div class="dum-dashboard-shortcode-item">
+					<h4><?php esc_html_e( 'CGPA', 'dream-university-management' ); ?></h4>
+					<div class="dum-shortcode-box">
+						<code id="dash-shortcode-cgpa">[dum_cgpa student_id="1"]</code>
+						<button class="dum-copy-btn" data-copy="dash-shortcode-cgpa" title="<?php esc_attr_e( 'Copy to clipboard', 'dream-university-management' ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+(function($) {
+	$(document).ready(function() {
+		$('.dum-copy-btn').on('click', function(e) {
+			e.preventDefault();
+			var targetId = $(this).data('copy');
+			var codeElement = $('#' + targetId);
+			var text = codeElement.text();
+			
+			// Create temporary textarea to copy text
+			var temp = $('<textarea>');
+			$('body').append(temp);
+			temp.val(text).select();
+			document.execCommand('copy');
+			temp.remove();
+			
+			// Show feedback
+			var btn = $(this);
+			var originalHtml = btn.html();
+			btn.html('<span class="dashicons dashicons-yes-alt"></span>');
+			btn.css('color', '#00a32a');
+			
+			setTimeout(function() {
+				btn.html(originalHtml);
+				btn.css('color', '');
+			}, 2000);
+		});
+	});
+})(jQuery);
+</script>
 

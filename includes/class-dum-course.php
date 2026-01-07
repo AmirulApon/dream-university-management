@@ -193,15 +193,15 @@ class DUM_Course {
 		check_admin_referer( 'dum_add_course' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$result = self::add( $_POST );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-courses&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=added' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
 		}
 		exit;
 	}
@@ -213,16 +213,16 @@ class DUM_Course {
 		check_admin_referer( 'dum_edit_course' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_POST['course_id'] );
 		$result = self::update( $id, $_POST );
 		
 		if ( $result !== false ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-courses&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=updated' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
 		}
 		exit;
 	}
@@ -234,16 +234,16 @@ class DUM_Course {
 		check_admin_referer( 'dum_delete_course' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_GET['id'] );
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-courses&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=deleted' ) );
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
 		}
 		exit;
 	}

@@ -1,0 +1,355 @@
+/**
+ * Frontend styles for Dream University Management
+ */
+
+/* General Styles */
+.dum-frontend-faculties,
+.dum-frontend-departments,
+.dum-frontend-students,
+.dum-frontend-teachers,
+.dum-frontend-staff,
+.dum-frontend-courses,
+.dum-frontend-grades,
+.dum-frontend-cgpa {
+	margin: 20px 0;
+}
+
+.dum-no-data {
+	padding: 20px;
+	text-align: center;
+	color: #666;
+	background: #f5f5f5;
+	border-radius: 4px;
+}
+
+/* Faculties Grid */
+.dum-faculties-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+}
+
+.dum-faculty-card {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dum-faculty-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.dum-faculty-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+	border-bottom: 2px solid #f0f0f0;
+}
+
+.dum-faculty-name {
+	margin: 0;
+	font-size: 1.3em;
+	color: #333;
+}
+
+.dum-faculty-code {
+	background: #2271b1;
+	color: #fff;
+	padding: 5px 12px;
+	border-radius: 4px;
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+.dum-faculty-description {
+	color: #666;
+	margin-bottom: 15px;
+	line-height: 1.6;
+}
+
+.dum-faculty-status {
+	margin-top: 10px;
+}
+
+/* Students, Teachers, Staff Grid */
+.dum-students-grid,
+.dum-teachers-grid,
+.dum-staff-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 20px;
+}
+
+.dum-student-card,
+.dum-teacher-card,
+.dum-staff-card {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	transition: transform 0.2s, box-shadow 0.2s;
+	text-align: center;
+}
+
+.dum-student-card:hover,
+.dum-teacher-card:hover,
+.dum-staff-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.dum-student-photo,
+.dum-teacher-photo,
+.dum-staff-photo {
+	margin-bottom: 15px;
+}
+
+.dum-student-photo img,
+.dum-teacher-photo img,
+.dum-staff-photo img {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid #f0f0f0;
+}
+
+.dum-student-name,
+.dum-teacher-name,
+.dum-staff-name {
+	margin: 0 0 15px 0;
+	font-size: 1.2em;
+	color: #333;
+}
+
+.dum-student-details,
+.dum-teacher-details,
+.dum-staff-details {
+	text-align: left;
+	margin-bottom: 15px;
+}
+
+.dum-student-details p,
+.dum-teacher-details p,
+.dum-staff-details p {
+	margin: 8px 0;
+	font-size: 0.9em;
+	color: #666;
+}
+
+.dum-student-details strong,
+.dum-teacher-details strong,
+.dum-staff-details strong {
+	color: #333;
+}
+
+.dum-student-status,
+.dum-teacher-status,
+.dum-staff-status {
+	margin-top: 10px;
+}
+
+/* Frontend Tables */
+.dum-frontend-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	overflow: hidden;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dum-frontend-table thead {
+	background: #2271b1;
+	color: #fff;
+}
+
+.dum-frontend-table th {
+	padding: 12px 15px;
+	text-align: left;
+	font-weight: 600;
+	font-size: 0.95em;
+}
+
+.dum-frontend-table tbody tr {
+	border-bottom: 1px solid #eee;
+	transition: background-color 0.2s;
+}
+
+.dum-frontend-table tbody tr:hover {
+	background-color: #f9f9f9;
+}
+
+.dum-frontend-table tbody tr:last-child {
+	border-bottom: none;
+}
+
+.dum-frontend-table td {
+	padding: 12px 15px;
+	font-size: 0.9em;
+	color: #333;
+}
+
+.dum-frontend-table tbody td:first-child {
+	font-weight: 500;
+}
+
+/* Status Badges */
+.dum-status-badge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 12px;
+	font-size: 0.85em;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.dum-status-badge.active {
+	background: #00a32a;
+	color: #fff;
+}
+
+.dum-status-badge.inactive {
+	background: #d63638;
+	color: #fff;
+}
+
+.dum-status-badge.pending {
+	background: #f0b849;
+	color: #fff;
+}
+
+/* Grade Badge */
+.dum-grade-badge {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 4px;
+	font-weight: bold;
+	background: #2271b1;
+	color: #fff;
+}
+
+/* CGPA View */
+.dum-cgpa-header {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	margin-bottom: 20px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dum-cgpa-header h2 {
+	margin: 0 0 15px 0;
+	color: #333;
+}
+
+.dum-student-info h3 {
+	margin: 0 0 10px 0;
+	color: #2271b1;
+	font-size: 1.3em;
+}
+
+.dum-student-info p {
+	margin: 5px 0;
+	color: #666;
+}
+
+.dum-cgpa-summary {
+	margin-bottom: 30px;
+}
+
+.dum-cgpa-card {
+	background: linear-gradient(135deg, #2271b1 0%, #135e96 100%);
+	color: #fff;
+	border-radius: 8px;
+	padding: 30px;
+	text-align: center;
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+	max-width: 300px;
+	margin: 0 auto;
+}
+
+.dum-cgpa-card h4 {
+	margin: 0 0 15px 0;
+	font-size: 1.1em;
+	opacity: 0.9;
+}
+
+.dum-cgpa-value {
+	font-size: 3em;
+	font-weight: bold;
+	margin: 10px 0;
+}
+
+.dum-cgpa-details {
+	margin: 15px 0 0 0;
+	font-size: 0.9em;
+	opacity: 0.9;
+}
+
+.dum-transcript {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dum-transcript h3 {
+	margin: 0 0 20px 0;
+	color: #333;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #f0f0f0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.dum-faculties-grid,
+	.dum-students-grid,
+	.dum-teachers-grid,
+	.dum-staff-grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.dum-frontend-table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	}
+	
+	.dum-cgpa-card {
+		max-width: 100%;
+	}
+	
+	.dum-cgpa-value {
+		font-size: 2.5em;
+	}
+}
+
+@media (max-width: 480px) {
+	.dum-faculty-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	.dum-faculty-code {
+		margin-top: 10px;
+	}
+	
+	.dum-student-photo img,
+	.dum-teacher-photo img,
+	.dum-staff-photo img {
+		width: 100px;
+		height: 100px;
+	}
+}
+

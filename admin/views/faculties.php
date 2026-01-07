@@ -112,6 +112,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
+					<th><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Faculty Code', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Faculty Name', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Description', 'dream-university-management' ); ?></th>
@@ -122,7 +123,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<tbody>
 				<?php if ( empty( $faculties ) ) : ?>
 					<tr>
-						<td colspan="5"><?php esc_html_e( 'No faculties found.', 'dream-university-management' ); ?></td>
+						<td colspan="6"><?php esc_html_e( 'No faculties found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $faculties as $faculty ) : ?>
@@ -130,6 +131,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 						$department_count = DUM_Department::count( 'all', $faculty->id );
 						?>
 						<tr>
+							<td><strong><?php echo esc_html( $faculty->id ); ?></strong></td>
 							<td><strong><?php echo esc_html( $faculty->faculty_code ); ?></strong></td>
 							<td><?php echo esc_html( $faculty->faculty_name ); ?></td>
 							<td><?php echo esc_html( $faculty->description ); ?></td>
@@ -138,7 +140,10 @@ if ( $action === 'add' || $action === 'edit' ) {
 									<?php echo esc_html( ucfirst( $faculty->status ) ); ?>
 								</span>
 								<br>
-								<small><?php echo esc_html( sprintf( __( '%d departments', 'dream-university-management' ), $department_count ) ); ?></small>
+								<small><?php
+								/* translators: %d: Number of departments */
+								echo esc_html( sprintf( __( '%d departments', 'dream-university-management' ), $department_count ) );
+								?></small>
 							</td>
 							<td>
 								<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-departments&faculty_id=' . $faculty->id ) ); ?>"><?php esc_html_e( 'View Departments', 'dream-university-management' ); ?></a> |

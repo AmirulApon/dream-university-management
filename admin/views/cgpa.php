@@ -73,7 +73,10 @@ $students = DUM_Student::get_all( array( 'status' => 'active' ) );
 								<td><?php echo esc_html( $record->course_code ); ?></td>
 								<td><?php echo esc_html( $record->course_name ); ?></td>
 								<td><?php echo esc_html( $record->credits ); ?></td>
-								<td><?php echo esc_html( $record->semester ? sprintf( __( 'Semester %s', 'dream-university-management' ), $record->semester ) : '-' ); ?></td>
+								<td><?php
+								/* translators: %s: Semester number */
+								echo esc_html( $record->semester ? sprintf( __( 'Semester %s', 'dream-university-management' ), $record->semester ) : '-' );
+								?></td>
 								<td><?php echo esc_html( $record->total_marks ); ?></td>
 								<td><strong><?php echo esc_html( $record->grade ); ?></strong></td>
 								<td><strong><?php echo esc_html( $record->grade_point ); ?></strong></td>

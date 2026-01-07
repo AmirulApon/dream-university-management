@@ -65,7 +65,7 @@ if ( $action === 'add' ) {
 				</tr>
 				<tr>
 					<th><label for="enrollment_date"><?php esc_html_e( 'Enrollment Date', 'dream-university-management' ); ?></label></th>
-					<td><input type="date" id="enrollment_date" name="enrollment_date" value="<?php echo esc_attr( date( 'Y-m-d' ) ); ?>" class="regular-text"></td>
+					<td><input type="date" id="enrollment_date" name="enrollment_date" value="<?php echo esc_attr( gmdate( 'Y-m-d' ) ); ?>" class="regular-text"></td>
 				</tr>
 			</table>
 			
@@ -180,6 +180,7 @@ if ( $action === 'add' ) {
 			<table class="wp-list-table widefat fixed striped table-view-list">
 				<thead>
 					<tr>
+						<th scope="col" class="manage-column"><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 						<th scope="col" class="manage-column column-student"><?php esc_html_e( 'Student ID', 'dream-university-management' ); ?></th>
 						<th scope="col" class="manage-column column-student-name"><?php esc_html_e( 'Student Name', 'dream-university-management' ); ?></th>
 						<th scope="col" class="manage-column column-course-code"><?php esc_html_e( 'Course Code', 'dream-university-management' ); ?></th>
@@ -194,41 +195,40 @@ if ( $action === 'add' ) {
 					<?php foreach ( $enrollments as $enrollment ) : ?>
 						<?php
 						// Handle null values
-						$student_id = ! empty( $enrollment->student_id ) ? esc_html( $enrollment->student_id ) : __( 'N/A', 'dream-university-management' );
+						$enrollment_id = ! empty( $enrollment->id ) ? intval( $enrollment->id ) : 0;
+						$student_id = ! empty( $enrollment->student_id ) ? $enrollment->student_id : '';
 						$student_name = '';
 						if ( ! empty( $enrollment->student_first_name ) && ! empty( $enrollment->student_last_name ) ) {
-							$student_name = esc_html( $enrollment->student_first_name . ' ' . $enrollment->student_last_name );
-						} else {
-							$student_name = __( 'N/A', 'dream-university-management' );
+							$student_name = $enrollment->student_first_name . ' ' . $enrollment->student_last_name;
 						}
-						$course_code = ! empty( $enrollment->course_code ) ? esc_html( $enrollment->course_code ) : __( 'N/A', 'dream-university-management' );
-						$course_name = ! empty( $enrollment->course_name ) ? esc_html( $enrollment->course_name ) : __( 'N/A', 'dream-university-management' );
-						$credits = ! empty( $enrollment->credits ) ? esc_html( $enrollment->credits ) : '0';
-						$enrollment_date = ! empty( $enrollment->enrollment_date ) ? esc_html( date_i18n( get_option( 'date_format' ), strtotime( $enrollment->enrollment_date ) ) ) : __( 'N/A', 'dream-university-management' );
-						$status = ! empty( $enrollment->status ) ? esc_attr( $enrollment->status ) : 'enrolled';
-						$enrollment_id = ! empty( $enrollment->id ) ? intval( $enrollment->id ) : 0;
+						$course_code = ! empty( $enrollment->course_code ) ? $enrollment->course_code : '';
+						$course_name = ! empty( $enrollment->course_name ) ? $enrollment->course_name : '';
+						$credits = ! empty( $enrollment->credits ) ? $enrollment->credits : '0';
+						$enrollment_date = ! empty( $enrollment->enrollment_date ) ? date_i18n( get_option( 'date_format' ), strtotime( $enrollment->enrollment_date ) ) : '';
+						$status = ! empty( $enrollment->status ) ? $enrollment->status : 'enrolled';
 						?>
 						<tr>
+							<td data-colname="<?php esc_attr_e( 'ID', 'dream-university-management' ); ?>"><strong><?php echo esc_html( $enrollment_id ); ?></strong></td>
 							<td class="column-student" data-colname="<?php esc_attr_e( 'Student ID', 'dream-university-management' ); ?>">
-								<strong><?php echo $student_id; ?></strong>
+								<strong><?php echo esc_html( $student_id ? $student_id : esc_html__( 'N/A', 'dream-university-management' ) ); ?></strong>
 							</td>
 							<td class="column-student-name" data-colname="<?php esc_attr_e( 'Student Name', 'dream-university-management' ); ?>">
-								<?php echo $student_name; ?>
+								<?php echo esc_html( $student_name ? $student_name : esc_html__( 'N/A', 'dream-university-management' ) ); ?>
 							</td>
 							<td class="column-course-code" data-colname="<?php esc_attr_e( 'Course Code', 'dream-university-management' ); ?>">
-								<strong><?php echo $course_code; ?></strong>
+								<strong><?php echo esc_html( $course_code ? $course_code : esc_html__( 'N/A', 'dream-university-management' ) ); ?></strong>
 							</td>
 							<td class="column-course-name" data-colname="<?php esc_attr_e( 'Course Name', 'dream-university-management' ); ?>">
-								<?php echo $course_name; ?>
+								<?php echo esc_html( $course_name ? $course_name : esc_html__( 'N/A', 'dream-university-management' ) ); ?>
 							</td>
 							<td class="column-credits" data-colname="<?php esc_attr_e( 'Credits', 'dream-university-management' ); ?>">
-								<?php echo $credits; ?>
+								<?php echo esc_html( $credits ); ?>
 							</td>
 							<td class="column-date" data-colname="<?php esc_attr_e( 'Enrollment Date', 'dream-university-management' ); ?>">
-								<?php echo $enrollment_date; ?>
+								<?php echo esc_html( $enrollment_date ? $enrollment_date : esc_html__( 'N/A', 'dream-university-management' ) ); ?>
 							</td>
 							<td class="column-status" data-colname="<?php esc_attr_e( 'Status', 'dream-university-management' ); ?>">
-								<span class="dum-status <?php echo $status; ?>">
+								<span class="dum-status <?php echo esc_attr( $status ); ?>">
 									<?php echo esc_html( ucfirst( $status ) ); ?>
 								</span>
 							</td>

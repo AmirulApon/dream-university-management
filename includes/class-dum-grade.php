@@ -144,44 +144,74 @@ class DUM_Grade {
 	}
 	
 	/**
-	 * Calculate total marks and grade
-	 * Updated grade system: 80 and above = A+
+	 * Get grade settings from options or return defaults
+	 */
+	private static function get_grade_settings() {
+		$default_grades = array(
+			array( 'grade' => 'A+', 'grade_point' => 4.0, 'min_percentage' => 80, 'max_percentage' => 100 ),
+			array( 'grade' => 'A', 'grade_point' => 3.75, 'min_percentage' => 75, 'max_percentage' => 79 ),
+			array( 'grade' => 'A-', 'grade_point' => 3.5, 'min_percentage' => 70, 'max_percentage' => 74 ),
+			array( 'grade' => 'B+', 'grade_point' => 3.25, 'min_percentage' => 65, 'max_percentage' => 69 ),
+			array( 'grade' => 'B', 'grade_point' => 3.0, 'min_percentage' => 60, 'max_percentage' => 64 ),
+			array( 'grade' => 'B-', 'grade_point' => 2.75, 'min_percentage' => 55, 'max_percentage' => 59 ),
+			array( 'grade' => 'C+', 'grade_point' => 2.5, 'min_percentage' => 50, 'max_percentage' => 54 ),
+			array( 'grade' => 'C', 'grade_point' => 2.25, 'min_percentage' => 45, 'max_percentage' => 49 ),
+			array( 'grade' => 'D', 'grade_point' => 2.0, 'min_percentage' => 40, 'max_percentage' => 44 ),
+			array( 'grade' => 'F', 'grade_point' => 0.0, 'min_percentage' => 0, 'max_percentage' => 39 ),
+		);
+		
+		$saved_settings = get_option( 'dum_grade_settings', array() );
+		
+		if ( ! empty( $saved_settings ) && is_array( $saved_settings ) ) {
+			return $saved_settings;
+		}
+		
+		return $default_grades;
+	}
+	
+	/**
+	 * Calculate total marks and grade based on saved settings
 	 */
 	private static function calculate_grade( $midterm, $final, $assignment ) {
 		$total = floatval( $midterm ) + floatval( $final ) + floatval( $assignment );
 		
-		// Updated grade calculation based on new scale
-		// 80 and above = A+ (4.0)
-		if ( $total >= 80 ) {
-			$grade = 'A+';
-			$grade_point = 4.0;
-		} elseif ( $total >= 75 ) {
-			$grade = 'A';
-			$grade_point = 3.75;
-		} elseif ( $total >= 70 ) {
-			$grade = 'A-';
-			$grade_point = 3.5;
-		} elseif ( $total >= 65 ) {
-			$grade = 'B+';
-			$grade_point = 3.25;
-		} elseif ( $total >= 60 ) {
-			$grade = 'B';
-			$grade_point = 3.0;
-		} elseif ( $total >= 55 ) {
-			$grade = 'B-';
-			$grade_point = 2.75;
-		} elseif ( $total >= 50 ) {
-			$grade = 'C+';
-			$grade_point = 2.5;
-		} elseif ( $total >= 45 ) {
-			$grade = 'C';
-			$grade_point = 2.25;
-		} elseif ( $total >= 40 ) {
-			$grade = 'D';
-			$grade_point = 2.0;
-		} else {
-			$grade = 'F';
-			$grade_point = 0.0;
+		// Get grade settings from options
+		$grade_settings = self::get_grade_settings();
+		
+		// Default values in case no match is found
+		$grade = 'F';
+		$grade_point = 0.0;
+		
+		// Loop through grade settings to find matching range
+		// Settings should be sorted by min_percentage descending
+		foreach ( $grade_settings as $setting ) {
+			$min = floatval( $setting['min_percentage'] );
+			$max = floatval( $setting['max_percentage'] );
+			
+			// Handle "and above" case (max >= 100)
+			if ( $max >= 100 ) {
+				if ( $total >= $min ) {
+					$grade = $setting['grade'];
+					$grade_point = floatval( $setting['grade_point'] );
+					break;
+				}
+			}
+			// Handle "below" case (min == 0)
+			elseif ( $min == 0 ) {
+				if ( $total <= $max ) {
+					$grade = $setting['grade'];
+					$grade_point = floatval( $setting['grade_point'] );
+					break;
+				}
+			}
+			// Handle normal range
+			else {
+				if ( $total >= $min && $total <= $max ) {
+					$grade = $setting['grade'];
+					$grade_point = floatval( $setting['grade_point'] );
+					break;
+				}
+			}
 		}
 		
 		return array(
@@ -275,17 +305,18 @@ class DUM_Grade {
 		check_admin_referer( 'dum_add_grade' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$result = self::add( $_POST );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-grades&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=added' ) );
+			exit;
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			exit;
 		}
-		exit;
 	}
 	
 	/**
@@ -295,18 +326,19 @@ class DUM_Grade {
 		check_admin_referer( 'dum_edit_grade' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_POST['grade_id'] );
 		$result = self::update( $id, $_POST );
 		
 		if ( $result !== false ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-grades&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=updated' ) );
+			exit;
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			exit;
 		}
-		exit;
 	}
 	
 	/**
@@ -316,18 +348,19 @@ class DUM_Grade {
 		check_admin_referer( 'dum_delete_grade' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions.', 'dream-university-management' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = intval( $_GET['id'] );
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_redirect( admin_url( 'admin.php?page=dum-grades&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=deleted' ) );
+			exit;
 		} else {
-			wp_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			exit;
 		}
-		exit;
 	}
 }
 

@@ -165,6 +165,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
+					<th><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Photo', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Staff ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Name', 'dream-university-management' ); ?></th>
@@ -178,7 +179,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<tbody>
 				<?php if ( empty( $staff_members ) ) : ?>
 					<tr>
-						<td colspan="8"><?php esc_html_e( 'No staff found.', 'dream-university-management' ); ?></td>
+						<td colspan="9"><?php esc_html_e( 'No staff found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $staff_members as $staff ) : ?>
@@ -186,9 +187,10 @@ if ( $action === 'add' || $action === 'edit' ) {
 						$image_url = ! empty( $staff->image ) ? esc_url( $staff->image ) : '';
 						?>
 						<tr>
+							<td><strong><?php echo esc_html( $staff->id ); ?></strong></td>
 							<td>
 								<?php if ( $image_url ) : ?>
-									<img src="<?php echo $image_url; ?>" alt="<?php echo esc_attr( $staff->first_name . ' ' . $staff->last_name ); ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+									<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $staff->first_name . ' ' . $staff->last_name ); ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
 								<?php else : ?>
 									<span class="dashicons dashicons-admin-users" style="font-size: 40px; color: #ccc;"></span>
 								<?php endif; ?>

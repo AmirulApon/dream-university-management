@@ -163,6 +163,16 @@ class DUM_Admin {
 			array( $this, 'reports_page' )
 		);
 		
+		// Shortcodes submenu
+		add_submenu_page(
+			'dream-university',
+			__( 'Shortcodes', 'dream-university-management' ),
+			__( 'Shortcodes', 'dream-university-management' ),
+			'manage_options',
+			'dum-shortcodes',
+			array( $this, 'shortcodes_page' )
+		);
+		
 		// Settings submenu
 		add_submenu_page(
 			'dream-university',
@@ -285,6 +295,13 @@ class DUM_Admin {
 	 */
 	public function reports_page() {
 		include DUM_PLUGIN_DIR . 'admin/views/reports.php';
+	}
+	
+	/**
+	 * Shortcodes page
+	 */
+	public function shortcodes_page() {
+		include DUM_PLUGIN_DIR . 'admin/views/shortcodes.php';
 	}
 	
 	/**

@@ -139,6 +139,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
+					<th><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Department Code', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Department Name', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Faculty', 'dream-university-management' ); ?></th>
@@ -150,11 +151,12 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<tbody>
 				<?php if ( empty( $departments ) ) : ?>
 					<tr>
-						<td colspan="6"><?php esc_html_e( 'No departments found.', 'dream-university-management' ); ?></td>
+						<td colspan="7"><?php esc_html_e( 'No departments found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $departments as $department ) : ?>
 						<tr>
+							<td><strong><?php echo esc_html( $department->id ); ?></strong></td>
 							<td><strong><?php echo esc_html( $department->department_code ); ?></strong></td>
 							<td><?php echo esc_html( $department->department_name ); ?></td>
 							<td><?php echo esc_html( $department->faculty_code . ' - ' . $department->faculty_name ); ?></td>
