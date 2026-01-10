@@ -102,6 +102,7 @@ class DUM_Grade {
 		
 		// Prepare query with values if we have where conditions
 		if ( ! empty( $where_values ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table names are safe (from $wpdb->prefix), $where_values are sanitized via placeholders
 			$query = $wpdb->prepare( $query, $where_values );
 		}
 		
@@ -111,6 +112,7 @@ class DUM_Grade {
 			$query .= $limit_query;
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Query is prepared above if needed, table names safe, $where_clause uses prepared placeholders, $orderby is sanitized
 		$results = $wpdb->get_results( $query, OBJECT );
 		
 		// If query failed or returned null, return empty array
@@ -131,6 +133,7 @@ class DUM_Grade {
 	public static function get( $id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_grades';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
 	
@@ -140,6 +143,7 @@ class DUM_Grade {
 	public static function get_by_enrollment( $enrollment_id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_grades';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $enrollment_id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE enrollment_id = %d", $enrollment_id ) );
 	}
 	
@@ -232,7 +236,9 @@ class DUM_Grade {
 		$enrollment_id = intval( $data['enrollment_id'] );
 		
 		// Get student_id and course_id from enrollment
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $enrollment_id is sanitized via %d placeholder
 		$enrollment = $wpdb->get_row( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe (from $wpdb->prefix)
 			"SELECT student_id, course_id FROM $enrollments_table WHERE id = %d",
 			$enrollment_id
 		) );
@@ -329,7 +335,7 @@ class DUM_Grade {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_POST['grade_id'] );
+		$id = isset( $_POST['grade_id'] ) ? intval( $_POST['grade_id'] ) : 0;
 		$result = self::update( $id, $_POST );
 		
 		if ( $result !== false ) {
@@ -351,7 +357,7 @@ class DUM_Grade {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_GET['id'] );
+		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
 		$result = self::delete( $id );
 		
 		if ( $result ) {

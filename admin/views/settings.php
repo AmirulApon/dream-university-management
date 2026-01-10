@@ -31,7 +31,9 @@ if ( isset( $_POST['dum_save_grade_settings'] ) && check_admin_referer( 'dum_sav
 	$saved_grades = array();
 	
 	if ( isset( $_POST['grades'] ) && is_array( $_POST['grades'] ) ) {
-		foreach ( $_POST['grades'] as $index => $grade_data ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Grades array is unslashed and sanitized in the loop below
+		$grades_array = wp_unslash( $_POST['grades'] );
+		foreach ( $grades_array as $index => $grade_data ) {
 			$grade = sanitize_text_field( $grade_data['grade'] ?? '' );
 			$grade_point = floatval( $grade_data['grade_point'] ?? 0 );
 			$min_percentage = floatval( $grade_data['min_percentage'] ?? 0 );

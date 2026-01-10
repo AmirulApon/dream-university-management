@@ -226,35 +226,48 @@ class DUM_Database {
 		$courses_table = $wpdb->prefix . 'dum_courses';
 		
 		// Add faculty_id and department_id to students table
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 		$column_exists = $wpdb->get_results( "SHOW COLUMNS FROM $students_table LIKE 'faculty_id'" );
 		if ( empty( $column_exists ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $students_table ADD faculty_id bigint(20) UNSIGNED DEFAULT NULL AFTER address, ADD department_id bigint(20) UNSIGNED DEFAULT NULL AFTER faculty_id" );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $students_table ADD KEY faculty_id (faculty_id), ADD KEY department_id (department_id)" );
 		}
 		
 		// Add image column to students table
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 		$image_column_exists = $wpdb->get_results( "SHOW COLUMNS FROM $students_table LIKE 'image'" );
 		if ( empty( $image_column_exists ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $students_table ADD image varchar(255) DEFAULT NULL AFTER address" );
 		}
 		
 		// Add faculty_id and department_id to teachers table
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 		$column_exists = $wpdb->get_results( "SHOW COLUMNS FROM $teachers_table LIKE 'faculty_id'" );
 		if ( empty( $column_exists ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $teachers_table ADD faculty_id bigint(20) UNSIGNED DEFAULT NULL AFTER address, ADD department_id bigint(20) UNSIGNED DEFAULT NULL AFTER faculty_id" );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $teachers_table ADD KEY faculty_id (faculty_id), ADD KEY department_id (department_id)" );
 		}
 		
 		// Add image column to teachers table
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 		$image_column_exists = $wpdb->get_results( "SHOW COLUMNS FROM $teachers_table LIKE 'image'" );
 		if ( empty( $image_column_exists ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $teachers_table ADD image varchar(255) DEFAULT NULL AFTER address" );
 		}
 		
 		// Add faculty_id and department_id to courses table
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 		$column_exists = $wpdb->get_results( "SHOW COLUMNS FROM $courses_table LIKE 'faculty_id'" );
 		if ( empty( $column_exists ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $courses_table ADD faculty_id bigint(20) UNSIGNED DEFAULT NULL AFTER department, ADD department_id bigint(20) UNSIGNED DEFAULT NULL AFTER faculty_id" );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $courses_table ADD KEY faculty_id (faculty_id), ADD KEY department_id (department_id)" );
 		}
 	}

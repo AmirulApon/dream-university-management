@@ -50,6 +50,7 @@ class DUM_CGPA {
 				  INNER JOIN $courses_table c ON g.course_id = c.id
 				  WHERE g.student_id = %d AND g.status = 'completed'";
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared below, table names are safe (from $wpdb->prefix)
 		$results = $wpdb->get_results( $wpdb->prepare( $query, $student_id ) );
 		
 		if ( empty( $results ) ) {
@@ -97,6 +98,7 @@ class DUM_CGPA {
 				  WHERE g.student_id = %d AND g.status = 'completed'
 				  ORDER BY c.semester, c.course_code";
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared below, table names are safe (from $wpdb->prefix)
 		return $wpdb->get_results( $wpdb->prepare( $query, $student_id ) );
 	}
 	
@@ -107,6 +109,7 @@ class DUM_CGPA {
 		global $wpdb;
 		$students_table = $wpdb->prefix . 'dum_students';
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
 		$students = $wpdb->get_results( "SELECT * FROM $students_table WHERE status = 'active'" );
 		
 		$results = array();

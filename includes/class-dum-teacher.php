@@ -80,6 +80,7 @@ class DUM_Teacher {
 			$query .= $wpdb->prepare( ' LIMIT %d OFFSET %d', $args['limit'], $args['offset'] );
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Query uses prepared WHERE clause ($where uses $wpdb->prepare), $orderby is sanitized, table name safe, custom plugin table
 		return $wpdb->get_results( $query );
 	}
 	
@@ -89,6 +90,7 @@ class DUM_Teacher {
 	public static function get( $id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_teachers';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder, custom plugin table
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
 	
@@ -125,6 +127,7 @@ class DUM_Teacher {
 			'status' => sanitize_text_field( $data['status'] ?? 'active' ),
 		);
 		
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom plugin table
 		return $wpdb->insert( $table, $insert_data );
 	}
 	
@@ -165,6 +168,7 @@ class DUM_Teacher {
 			'status' => sanitize_text_field( $data['status'] ?? 'active' ),
 		);
 		
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table
 		return $wpdb->update( $table, $update_data, array( 'id' => $id ) );
 	}
 	
@@ -174,6 +178,7 @@ class DUM_Teacher {
 	public static function delete( $id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_teachers';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
 	
@@ -185,9 +190,11 @@ class DUM_Teacher {
 		$table = $wpdb->prefix . 'dum_teachers';
 		
 		if ( $status === 'all' ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query, custom plugin table
 			return $wpdb->get_var( "SELECT COUNT(*) FROM $table" );
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $status is sanitized via %s placeholder, custom plugin table
 		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE status = %s", $status ) );
 	}
 	
@@ -221,7 +228,7 @@ class DUM_Teacher {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_POST['teacher_id'] );
+		$id = isset( $_POST['teacher_id'] ) ? intval( $_POST['teacher_id'] ) : 0;
 		$result = self::update( $id, $_POST );
 		
 		if ( $result !== false ) {
@@ -256,7 +263,7 @@ class DUM_Teacher {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_GET['id'] );
+		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
 		$result = self::delete( $id );
 		
 		if ( $result ) {

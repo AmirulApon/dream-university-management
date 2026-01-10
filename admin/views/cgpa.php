@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $student_id = isset( $_GET['student_id'] ) ? intval( $_GET['student_id'] ) : 0;
 $students = DUM_Student::get_all( array( 'status' => 'active' ) );
 ?>

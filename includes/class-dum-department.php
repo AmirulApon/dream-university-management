@@ -97,6 +97,7 @@ class DUM_Department {
 				  ORDER BY $orderby";
 		
 		if ( ! empty( $where_values ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table names are safe (from $wpdb->prefix), $where_values are sanitized via placeholders
 			$query = $wpdb->prepare( $query, $where_values );
 		}
 		
@@ -104,6 +105,7 @@ class DUM_Department {
 			$query .= $wpdb->prepare( ' LIMIT %d OFFSET %d', $args['limit'], $args['offset'] );
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Query is prepared above if needed, table names safe, $where_clause uses prepared placeholders, $orderby is sanitized
 		return $wpdb->get_results( $query );
 	}
 	
@@ -115,13 +117,17 @@ class DUM_Department {
 		$table = $wpdb->prefix . 'dum_departments';
 		
 		if ( $status === 'all' ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $faculty_id is sanitized via %d placeholder
 			return $wpdb->get_results( $wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe (from $wpdb->prefix)
 				"SELECT * FROM $table WHERE faculty_id = %d ORDER BY department_name ASC",
 				$faculty_id
 			) );
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $faculty_id and $status are sanitized via placeholders
 		return $wpdb->get_results( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe (from $wpdb->prefix)
 			"SELECT * FROM $table WHERE faculty_id = %d AND status = %s ORDER BY department_name ASC",
 			$faculty_id,
 			$status
@@ -134,6 +140,7 @@ class DUM_Department {
 	public static function get( $id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_departments';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
 	
@@ -190,17 +197,21 @@ class DUM_Department {
 		$table = $wpdb->prefix . 'dum_departments';
 		
 		if ( $faculty_id > 0 && $status === 'all' ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $faculty_id is sanitized via %d placeholder
 			return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE faculty_id = %d", $faculty_id ) );
 		}
 		
 		if ( $faculty_id > 0 ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $faculty_id and $status are sanitized via placeholders
 			return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE faculty_id = %d AND status = %s", $faculty_id, $status ) );
 		}
 		
 		if ( $status === 'all' ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
 			return $wpdb->get_var( "SELECT COUNT(*) FROM $table" );
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $status is sanitized via %s placeholder
 		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE status = %s", $status ) );
 	}
 	
@@ -234,7 +245,7 @@ class DUM_Department {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_POST['department_id'] );
+		$id = isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0;
 		$result = self::update( $id, $_POST );
 		
 		if ( $result !== false ) {
@@ -255,7 +266,7 @@ class DUM_Department {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_GET['id'] );
+		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
 		$result = self::delete( $id );
 		
 		if ( $result ) {

@@ -100,6 +100,7 @@ class DUM_Enrollment {
 		
 		// Prepare query with values if we have where conditions
 		if ( ! empty( $where_values ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table names are safe (from $wpdb->prefix), $where_values are sanitized via placeholders
 			$query = $wpdb->prepare( $query, $where_values );
 		}
 		
@@ -109,6 +110,7 @@ class DUM_Enrollment {
 			$query .= $limit_query;
 		}
 		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Query is prepared above if needed, table names safe, $where_clause uses prepared placeholders, $orderby is sanitized
 		$results = $wpdb->get_results( $query, OBJECT );
 		
 		// If query failed or returned null, return empty array
@@ -129,6 +131,7 @@ class DUM_Enrollment {
 	public static function get( $id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_enrollments';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
 	
@@ -150,7 +153,7 @@ class DUM_Enrollment {
 		$insert_data = array(
 			'student_id' => $student_id,
 			'course_id' => $course_id,
-			'enrollment_date' => sanitize_text_field( $data['enrollment_date'] ?? date( 'Y-m-d' ) ),
+			'enrollment_date' => sanitize_text_field( $data['enrollment_date'] ?? gmdate( 'Y-m-d' ) ),
 			'status' => sanitize_text_field( $data['status'] ?? 'enrolled' ),
 		);
 		
@@ -172,7 +175,9 @@ class DUM_Enrollment {
 	public static function is_enrolled( $student_id, $course_id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . 'dum_enrollments';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $student_id and $course_id are sanitized via %d placeholders
 		$count = $wpdb->get_var( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe (from $wpdb->prefix)
 			"SELECT COUNT(*) FROM $table WHERE student_id = %d AND course_id = %d",
 			$student_id,
 			$course_id
@@ -190,8 +195,8 @@ class DUM_Enrollment {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$student_id = intval( $_POST['student_id'] );
-		$course_id = intval( $_POST['course_id'] );
+		$student_id = isset( $_POST['student_id'] ) ? intval( $_POST['student_id'] ) : 0;
+		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
 		
 		// Check if already enrolled
 		if ( self::is_enrolled( $student_id, $course_id ) ) {
@@ -219,7 +224,7 @@ class DUM_Enrollment {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = intval( $_GET['id'] );
+		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
 		$result = self::delete( $id );
 		
 		if ( $result ) {

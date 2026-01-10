@@ -10,9 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$action = isset( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : 'list';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
-$message = isset( $_GET['message'] ) ? sanitize_text_field( $_GET['message'] ) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 
 // Show messages
 if ( $message === 'added' ) {
@@ -128,8 +131,10 @@ if ( $action === 'add' || $action === 'edit' ) {
 	</div>
 	<?php
 } else {
-	$search = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : '';
-	$status_filter = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : 'all';
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+	$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+	$status_filter = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : 'all';
 	
 	$staff_members = DUM_Staff::get_all( array( 
 		'search' => $search,
