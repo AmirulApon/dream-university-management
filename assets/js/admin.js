@@ -15,7 +15,7 @@
 				return;
 			}
 			
-			$departmentSelect.html('<option value="0">Loading...</option>');
+			$departmentSelect.html('<option value="0">' + (dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.loading : 'Loading...') + '</option>');
 			
 			if (facultyId > 0 && typeof ajaxurl !== 'undefined') {
 				$.ajax({
@@ -28,21 +28,25 @@
 					},
 					success: function(response) {
 						if (response.success && response.data) {
-							var options = '<option value="0">Select Department</option>';
+							var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+							var options = '<option value="0">' + selectText + '</option>';
 							$.each(response.data, function(index, dept) {
 								options += '<option value="' + dept.id + '">' + dept.department_code + ' - ' + dept.department_name + '</option>';
 							});
 							$departmentSelect.html(options);
 						} else {
-							$departmentSelect.html('<option value="0">Select Department</option>');
+							var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+							$departmentSelect.html('<option value="0">' + selectText + '</option>');
 						}
 					},
 					error: function() {
-						$departmentSelect.html('<option value="0">Select Department</option>');
+						var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+						$departmentSelect.html('<option value="0">' + selectText + '</option>');
 					}
 				});
 			} else {
-				$departmentSelect.html('<option value="0">Select Department</option>');
+				var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+				$departmentSelect.html('<option value="0">' + selectText + '</option>');
 			}
 		});
 		

@@ -178,45 +178,6 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<?php submit_button( $action === 'add' ? __( 'Add Student', 'dream-university-management' ) : __( 'Update Student', 'dream-university-management' ) ); ?>
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-students' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
 		</form>
-		
-		<script>
-		jQuery(document).ready(function($) {
-			$('#faculty_id').on('change', function() {
-				var facultyId = $(this).val();
-				var $departmentSelect = $('#department_id');
-				
-				$departmentSelect.html('<option value="0"><?php echo esc_js( __( 'Loading...', 'dream-university-management' ) ); ?></option>');
-				
-				if (facultyId > 0) {
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {
-							action: 'dum_get_departments',
-							faculty_id: facultyId,
-							nonce: '<?php echo esc_js( wp_create_nonce( 'dum_get_departments' ) ); ?>'
-						},
-						success: function(response) {
-							if (response.success && response.data) {
-								var options = '<option value="0"><?php echo esc_js( __( 'Select Department', 'dream-university-management' ) ); ?></option>';
-								$.each(response.data, function(index, dept) {
-									options += '<option value="' + dept.id + '">' + dept.department_code + ' - ' + dept.department_name + '</option>';
-								});
-								$departmentSelect.html(options);
-							} else {
-								$departmentSelect.html('<option value="0"><?php echo esc_js( __( 'Select Department', 'dream-university-management' ) ); ?></option>');
-							}
-						},
-						error: function() {
-							$departmentSelect.html('<option value="0"><?php echo esc_js( __( 'Select Department', 'dream-university-management' ) ); ?></option>');
-						}
-					});
-				} else {
-					$departmentSelect.html('<option value="0"><?php echo esc_js( __( 'Select Department', 'dream-university-management' ) ); ?></option>');
-				}
-			});
-		});
-		</script>
 	</div>
 	<?php
 } else {

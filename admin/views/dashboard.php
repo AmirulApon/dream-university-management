@@ -160,34 +160,3 @@ $course_count = DUM_Course::count();
 	</div>
 </div>
 
-<script type="text/javascript">
-(function($) {
-	$(document).ready(function() {
-		$('.dum-copy-btn').on('click', function(e) {
-			e.preventDefault();
-			var targetId = $(this).data('copy');
-			var codeElement = $('#' + targetId);
-			var text = codeElement.text();
-			
-			// Create temporary textarea to copy text
-			var temp = $('<textarea>');
-			$('body').append(temp);
-			temp.val(text).select();
-			document.execCommand('copy');
-			temp.remove();
-			
-			// Show feedback
-			var btn = $(this);
-			var originalHtml = btn.html();
-			btn.html('<span class="dashicons dashicons-yes-alt"></span>');
-			btn.css('color', '#00a32a');
-			
-			setTimeout(function() {
-				btn.html(originalHtml);
-				btn.css('color', '');
-			}, 2000);
-		});
-	});
-})(jQuery);
-</script>
-

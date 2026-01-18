@@ -214,10 +214,126 @@ class DUM_Admin {
 		wp_localize_script( 'dum-admin-script', 'dumAdmin', array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'nonce' => wp_create_nonce( 'dum-admin-nonce' ),
+			'i18n' => array(
+				'loading' => __( 'Loading...', 'dream-university-management' ),
+				'selectDepartment' => __( 'Select Department', 'dream-university-management' ),
+				'remove' => __( 'Remove', 'dream-university-management' ),
+				'minOneGrade' => __( 'You must have at least one grade setting.', 'dream-university-management' ),
+			),
 		) );
 		
 		// Make ajaxurl available globally for older scripts
-		wp_add_inline_script( 'dum-admin-script', 'var ajaxurl = "' . admin_url( 'admin-ajax.php' ) . '";' );
+		wp_add_inline_script( 'dum-admin-script', 'var ajaxurl = "' . esc_js( admin_url( 'admin-ajax.php' ) ) . '";', 'before' );
+		
+		// Add page-specific inline scripts
+		$this->add_page_specific_scripts( $hook );
+	}
+	
+	/**
+	 * Add page-specific inline scripts
+	 */
+	private function add_page_specific_scripts( $hook ) {
+		// Dashboard copy-to-clipboard script
+		if ( strpos( $hook, 'dream-university' ) !== false || strpos( $hook, 'dum-shortcodes' ) !== false ) {
+			$copy_script = "
+(function($) {
+	$(document).ready(function() {
+		$('.dum-copy-btn').on('click', function(e) {
+			e.preventDefault();
+			var targetId = $(this).data('copy');
+			var codeElement = $('#' + targetId);
+			var text = codeElement.text();
+			
+			// Create temporary textarea to copy text
+			var temp = $('<textarea>');
+			$('body').append(temp);
+			temp.val(text).select();
+			document.execCommand('copy');
+			temp.remove();
+			
+			// Show feedback
+			var btn = $(this);
+			var originalHtml = btn.html();
+			btn.html('<span class=\"dashicons dashicons-yes-alt\"></span>');
+			btn.css('color', '#00a32a');
+			
+			setTimeout(function() {
+				btn.html(originalHtml);
+				btn.css('color', '');
+			}, 2000);
+		});
+	});
+})(jQuery);
+			";
+			wp_add_inline_script( 'dum-admin-script', $copy_script );
+		}
+		
+		// Settings page grade management script
+		if ( strpos( $hook, 'dum-settings' ) !== false ) {
+			// Get current grade settings count
+			$grade_settings = get_option( 'dum_grade_settings', array() );
+			$grade_count = count( $grade_settings );
+			
+			$settings_script = "
+(function($) {
+	$(document).ready(function() {
+		var gradeIndex = " . intval( $grade_count ) . ";
+		
+		// Add new grade row
+		$('#add-grade-row').on('click', function() {
+			var newRow = '<tr>' +
+				'<td><input type=\"text\" name=\"grades[' + gradeIndex + '][grade]\" class=\"regular-text\" required style=\"width: 100%;\"></td>' +
+				'<td><input type=\"number\" name=\"grades[' + gradeIndex + '][grade_point]\" step=\"0.01\" min=\"0\" max=\"4\" class=\"small-text\" required style=\"width: 100%;\"></td>' +
+				'<td><input type=\"number\" name=\"grades[' + gradeIndex + '][min_percentage]\" step=\"0.01\" min=\"0\" max=\"100\" class=\"small-text min-percent-input\" required style=\"width: 100%;\"></td>' +
+				'<td><input type=\"number\" name=\"grades[' + gradeIndex + '][max_percentage]\" step=\"0.01\" min=\"0\" max=\"100\" class=\"small-text max-percent-input\" required style=\"width: 100%;\"></td>' +
+				'<td><strong class=\"range-display\">-</strong><br><button type=\"button\" class=\"button remove-grade-row\" style=\"margin-top: 5px;\">' + dumAdmin.i18n.remove + '</button></td>' +
+				'</tr>';
+			
+			$('#grade-settings-tbody').append(newRow);
+			gradeIndex++;
+		});
+		
+		// Remove grade row
+		$(document).on('click', '.remove-grade-row', function() {
+			if ($('#grade-settings-tbody tr').length > 1) {
+				$(this).closest('tr').remove();
+			} else {
+				alert(dumAdmin.i18n.minOneGrade);
+			}
+		});
+		
+		// Update range display on input change
+		$(document).on('input', 'input[name*=\"[min_percentage]\"], input[name*=\"[max_percentage]\"]', function() {
+			var row = $(this).closest('tr');
+			var minPercent = parseFloat(row.find('input[name*=\"[min_percentage]\"]').val()) || 0;
+			var maxPercent = parseFloat(row.find('input[name*=\"[max_percentage]\"]').val()) || 0;
+			var rangeDisplay = row.find('.range-display');
+			var removeButton = row.find('.remove-grade-row');
+			
+			var rangeText = '';
+			if (maxPercent >= 100) {
+				rangeText = minPercent + '% and above';
+			} else if (minPercent == 0) {
+				rangeText = 'Below ' + (maxPercent + 1) + '%';
+			} else {
+				rangeText = minPercent + '-' + maxPercent + '%';
+			}
+			
+			if (removeButton.length) {
+				rangeDisplay.html(rangeText);
+			} else {
+				if ($('#grade-settings-tbody tr').length > 1) {
+					rangeDisplay.parent().html('<strong class=\"range-display\">' + rangeText + '</strong><br><button type=\"button\" class=\"button remove-grade-row\" style=\"margin-top: 5px;\">' + dumAdmin.i18n.remove + '</button>');
+				} else {
+					rangeDisplay.html(rangeText);
+				}
+			}
+		});
+	});
+})(jQuery);
+			";
+			wp_add_inline_script( 'dum-admin-script', $settings_script );
+		}
 	}
 	
 	/**

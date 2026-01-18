@@ -121,13 +121,13 @@ class Dream_University_Management {
 	 * AJAX handler to get departments by faculty
 	 */
 	public function ajax_get_departments() {
-		check_ajax_referer( 'dum_get_departments', 'nonce' );
+		check_ajax_referer( 'dum-admin-nonce', 'nonce' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'dream-university-management' ) ) );
 		}
 		
-		$faculty_id = intval( $_POST['faculty_id'] ?? 0 );
+		$faculty_id = isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0;
 		
 		if ( $faculty_id <= 0 ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid faculty ID.', 'dream-university-management' ) ) );
