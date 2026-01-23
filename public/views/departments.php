@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div class="dum-frontend-departments">
+<div class="dreaunma-frontend-departments">
 	<?php if ( empty( $departments ) ) : ?>
-		<p class="dum-no-data"><?php esc_html_e( 'No departments found.', 'dream-university-management' ); ?></p>
+		<p class="dreaunma-no-data"><?php esc_html_e( 'No departments found.', 'dream-university-management' ); ?></p>
 	<?php else : ?>
-		<table class="dum-frontend-table">
+		<table class="dreaunma-frontend-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Department Code', 'dream-university-management' ); ?></th>
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<tbody>
 				<?php foreach ( $departments as $department ) : ?>
 					<?php
-					$faculty = DUM_Faculty::get( $department->faculty_id );
+					$faculty = DREAUNMA_Faculty::get( $department->faculty_id );
 					$faculty_name = $faculty ? $faculty->faculty_name : '-';
 					?>
 					<tr>
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</td>
 						<td><?php echo esc_html( $faculty_name ); ?></td>
 						<td>
-							<span class="dum-status-badge <?php echo esc_attr( $department->status ); ?>">
+							<span class="dreaunma-status-badge <?php echo esc_attr( $department->status ); ?>">
 								<?php echo esc_html( ucfirst( $department->status ) ); ?>
 							</span>
 						</td>

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Faculty class
  */
-class DUM_Faculty {
+class DREAUNMA_Faculty {
 	
 	/**
 	 * Instance of this class
@@ -34,9 +34,9 @@ class DUM_Faculty {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_post_dum_add_faculty', array( $this, 'handle_add_faculty' ) );
-		add_action( 'admin_post_dum_edit_faculty', array( $this, 'handle_edit_faculty' ) );
-		add_action( 'admin_post_dum_delete_faculty', array( $this, 'handle_delete_faculty' ) );
+		add_action( 'admin_post_dreaunma_add_faculty', array( $this, 'handle_add_faculty' ) );
+		add_action( 'admin_post_dreaunma_edit_faculty', array( $this, 'handle_edit_faculty' ) );
+		add_action( 'admin_post_dreaunma_delete_faculty', array( $this, 'handle_delete_faculty' ) );
 	}
 	
 	/**
@@ -44,7 +44,7 @@ class DUM_Faculty {
 	 */
 	public static function get_all( $args = array() ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_faculties';
+		$table = $wpdb->prefix . 'dreaunma_faculties';
 		
 		$defaults = array(
 			'status' => 'all',
@@ -102,7 +102,7 @@ class DUM_Faculty {
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_faculties';
+		$table = $wpdb->prefix . 'dreaunma_faculties';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
@@ -112,7 +112,7 @@ class DUM_Faculty {
 	 */
 	public static function add( $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_faculties';
+		$table = $wpdb->prefix . 'dreaunma_faculties';
 		
 		$data = array(
 			'faculty_code' => sanitize_text_field( $data['faculty_code'] ),
@@ -129,7 +129,7 @@ class DUM_Faculty {
 	 */
 	public static function update( $id, $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_faculties';
+		$table = $wpdb->prefix . 'dreaunma_faculties';
 		
 		$data = array(
 			'faculty_code' => sanitize_text_field( $data['faculty_code'] ),
@@ -146,7 +146,7 @@ class DUM_Faculty {
 	 */
 	public static function delete( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_faculties';
+		$table = $wpdb->prefix . 'dreaunma_faculties';
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
 	
@@ -155,7 +155,7 @@ class DUM_Faculty {
 	 */
 	public static function count( $status = 'all' ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_faculties';
+		$table = $wpdb->prefix . 'dreaunma_faculties';
 		
 		if ( $status === 'all' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
@@ -170,18 +170,26 @@ class DUM_Faculty {
 	 * Handle add faculty
 	 */
 	public function handle_add_faculty() {
-		check_admin_referer( 'dum_add_faculty' );
+		check_admin_referer( 'dreaunma_add_faculty' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$result = self::add( $_POST );
+		// Extract and sanitize only required fields
+		$data = array(
+			'faculty_code' => isset( $_POST['faculty_code'] ) ? sanitize_text_field( wp_unslash( $_POST['faculty_code'] ) ) : '',
+			'faculty_name' => isset( $_POST['faculty_name'] ) ? sanitize_text_field( wp_unslash( $_POST['faculty_name'] ) ) : '',
+			'description' => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::add( $data );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-faculties&message=added' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-faculties&message=error' ) );
 		}
 		exit;
 	}
@@ -190,19 +198,28 @@ class DUM_Faculty {
 	 * Handle edit faculty
 	 */
 	public function handle_edit_faculty() {
-		check_admin_referer( 'dum_edit_faculty' );
+		check_admin_referer( 'dreaunma_edit_faculty' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0;
-		$result = self::update( $id, $_POST );
+		
+		// Extract and sanitize only required fields
+		$data = array(
+			'faculty_code' => isset( $_POST['faculty_code'] ) ? sanitize_text_field( wp_unslash( $_POST['faculty_code'] ) ) : '',
+			'faculty_name' => isset( $_POST['faculty_name'] ) ? sanitize_text_field( wp_unslash( $_POST['faculty_name'] ) ) : '',
+			'description' => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::update( $id, $data );
 		
 		if ( $result !== false ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-faculties&message=updated' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-faculties&message=error' ) );
 		}
 		exit;
 	}
@@ -211,7 +228,7 @@ class DUM_Faculty {
 	 * Handle delete faculty
 	 */
 	public function handle_delete_faculty() {
-		check_admin_referer( 'dum_delete_faculty' );
+		check_admin_referer( 'dreaunma_delete_faculty' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
@@ -221,9 +238,9 @@ class DUM_Faculty {
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-faculties&message=deleted' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-faculties&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-faculties&message=error' ) );
 		}
 		exit;
 	}

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Database class
  */
-class DUM_Database {
+class DREAUNMA_Database {
 	
 	/**
 	 * Instance of this class
@@ -46,7 +46,7 @@ class DUM_Database {
 		$charset_collate = $wpdb->get_charset_collate();
 		
 		// Students table
-		$table_students = $wpdb->prefix . 'dum_students';
+		$table_students = $wpdb->prefix . 'dreaunma_students';
 		$sql_students = "CREATE TABLE IF NOT EXISTS $table_students (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			student_id varchar(50) NOT NULL,
@@ -70,7 +70,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Teachers table
-		$table_teachers = $wpdb->prefix . 'dum_teachers';
+		$table_teachers = $wpdb->prefix . 'dreaunma_teachers';
 		$sql_teachers = "CREATE TABLE IF NOT EXISTS $table_teachers (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			teacher_id varchar(50) NOT NULL,
@@ -96,7 +96,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Staff table
-		$table_staff = $wpdb->prefix . 'dum_staff';
+		$table_staff = $wpdb->prefix . 'dreaunma_staff';
 		$sql_staff = "CREATE TABLE IF NOT EXISTS $table_staff (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			staff_id varchar(50) NOT NULL,
@@ -122,7 +122,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Courses table
-		$table_courses = $wpdb->prefix . 'dum_courses';
+		$table_courses = $wpdb->prefix . 'dreaunma_courses';
 		$sql_courses = "CREATE TABLE IF NOT EXISTS $table_courses (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			course_code varchar(50) NOT NULL,
@@ -141,7 +141,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Enrollments table
-		$table_enrollments = $wpdb->prefix . 'dum_enrollments';
+		$table_enrollments = $wpdb->prefix . 'dreaunma_enrollments';
 		$sql_enrollments = "CREATE TABLE IF NOT EXISTS $table_enrollments (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			student_id bigint(20) UNSIGNED NOT NULL,
@@ -157,7 +157,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Grades table
-		$table_grades = $wpdb->prefix . 'dum_grades';
+		$table_grades = $wpdb->prefix . 'dreaunma_grades';
 		$sql_grades = "CREATE TABLE IF NOT EXISTS $table_grades (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			enrollment_id bigint(20) UNSIGNED NOT NULL,
@@ -179,7 +179,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Faculties table
-		$table_faculties = $wpdb->prefix . 'dum_faculties';
+		$table_faculties = $wpdb->prefix . 'dreaunma_faculties';
 		$sql_faculties = "CREATE TABLE IF NOT EXISTS $table_faculties (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			faculty_code varchar(50) NOT NULL,
@@ -193,7 +193,7 @@ class DUM_Database {
 		) $charset_collate;";
 		
 		// Departments table
-		$table_departments = $wpdb->prefix . 'dum_departments';
+		$table_departments = $wpdb->prefix . 'dreaunma_departments';
 		$sql_departments = "CREATE TABLE IF NOT EXISTS $table_departments (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			department_code varchar(50) NOT NULL,
@@ -221,9 +221,9 @@ class DUM_Database {
 		
 		// Update existing tables to add faculty_id and department_id
 		// Check if columns exist before adding
-		$students_table = $wpdb->prefix . 'dum_students';
-		$teachers_table = $wpdb->prefix . 'dum_teachers';
-		$courses_table = $wpdb->prefix . 'dum_courses';
+		$students_table = $wpdb->prefix . 'dreaunma_students';
+		$teachers_table = $wpdb->prefix . 'dreaunma_teachers';
+		$courses_table = $wpdb->prefix . 'dreaunma_courses';
 		
 		// Add faculty_id and department_id to students table
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)

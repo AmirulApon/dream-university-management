@@ -24,10 +24,10 @@ $default_grades = array(
 	array( 'grade' => 'F', 'grade_point' => 0.0, 'min_percentage' => 0, 'max_percentage' => 39 ),
 );
 
-$grade_settings = get_option( 'dum_grade_settings', $default_grades );
+$grade_settings = get_option( 'dreaunma_grade_settings', $default_grades );
 
 // Handle form submission
-if ( isset( $_POST['dum_save_grade_settings'] ) && check_admin_referer( 'dum_save_grade_settings' ) ) {
+if ( isset( $_POST['dreaunma_save_grade_settings'] ) && check_admin_referer( 'dreaunma_save_grade_settings' ) ) {
 	$saved_grades = array();
 	
 	if ( isset( $_POST['grades'] ) && is_array( $_POST['grades'] ) ) {
@@ -54,7 +54,7 @@ if ( isset( $_POST['dum_save_grade_settings'] ) && check_admin_referer( 'dum_sav
 			return $b['min_percentage'] <=> $a['min_percentage'];
 		} );
 		
-		update_option( 'dum_grade_settings', $saved_grades );
+		update_option( 'dreaunma_grade_settings', $saved_grades );
 		$grade_settings = $saved_grades;
 		
 		echo '<div class="notice notice-success"><p>' . esc_html__( 'Grade settings saved successfully!', 'dream-university-management' ) . '</p></div>';
@@ -74,11 +74,11 @@ if ( empty( $grade_settings ) ) {
 	<table class="form-table">
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Plugin Version', 'dream-university-management' ); ?></th>
-			<td><?php echo esc_html( DUM_VERSION ); ?></td>
+			<td><?php echo esc_html( DREAUNMA_VERSION ); ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Database Version', 'dream-university-management' ); ?></th>
-			<td><?php echo esc_html( get_option( 'dum_db_version', '1.0' ) ); ?></td>
+			<td><?php echo esc_html( get_option( 'dreaunma_db_version', '1.0' ) ); ?></td>
 		</tr>
 	</table>
 	
@@ -86,7 +86,7 @@ if ( empty( $grade_settings ) ) {
 	<p><?php esc_html_e( 'Customize the grade calculation scale. The ranges should be in descending order (highest to lowest).', 'dream-university-management' ); ?></p>
 	
 	<form method="post" action="">
-		<?php wp_nonce_field( 'dum_save_grade_settings' ); ?>
+		<?php wp_nonce_field( 'dreaunma_save_grade_settings' ); ?>
 		
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
@@ -164,7 +164,7 @@ if ( empty( $grade_settings ) ) {
 		</table>
 		
 		<p class="submit">
-			<?php submit_button( __( 'Save Grade Settings', 'dream-university-management' ), 'primary', 'dum_save_grade_settings', false ); ?>
+			<?php submit_button( __( 'Save Grade Settings', 'dream-university-management' ), 'primary', 'dreaunma_save_grade_settings', false ); ?>
 			<button type="button" class="button" id="add-grade-row" style="margin-left: 10px;">
 				<?php esc_html_e( 'Add Grade', 'dream-university-management' ); ?>
 			</button>

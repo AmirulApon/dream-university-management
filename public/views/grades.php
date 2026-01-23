@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div class="dum-frontend-grades">
+<div class="dreaunma-frontend-grades">
 	<?php if ( empty( $grades ) ) : ?>
-		<p class="dum-no-data"><?php esc_html_e( 'No grades found.', 'dream-university-management' ); ?></p>
+		<p class="dreaunma-no-data"><?php esc_html_e( 'No grades found.', 'dream-university-management' ); ?></p>
 	<?php else : ?>
-		<table class="dum-frontend-table">
+		<table class="dreaunma-frontend-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Student', 'dream-university-management' ); ?></th>
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( ! empty( $grade->student_first_name ) && ! empty( $grade->student_last_name ) ) {
 						$student_name = $grade->student_first_name . ' ' . $grade->student_last_name;
 					} elseif ( ! empty( $grade->student_id ) ) {
-						$student = DUM_Student::get( $grade->student_id );
+						$student = DREAUNMA_Student::get( $grade->student_id );
 						if ( $student ) {
 							$student_name = $student->first_name . ' ' . $student->last_name;
 						}
@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( ! empty( $grade->course_name ) ) {
 						$course_name = $grade->course_name;
 					} elseif ( ! empty( $grade->course_id ) ) {
-						$course = DUM_Course::get( $grade->course_id );
+						$course = DREAUNMA_Course::get( $grade->course_id );
 						if ( $course ) {
 							$course_name = $course->course_name;
 						}
@@ -56,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<td><?php echo esc_html( $grade->total_marks ); ?></td>
 						<td><?php echo esc_html( $grade->obtained_marks ); ?></td>
 						<td>
-							<span class="dum-grade-badge"><?php echo esc_html( $grade->grade ); ?></span>
+							<span class="dreaunma-grade-badge"><?php echo esc_html( $grade->grade ); ?></span>
 						</td>
 						<td><?php echo esc_html( $grade->grade_point ); ?></td>
 						<td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $grade->created_at ) ) ); ?></td>

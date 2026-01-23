@@ -11,28 +11,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div class="dum-frontend-students">
+<div class="dreaunma-frontend-students">
 	<?php if ( empty( $students ) ) : ?>
-		<p class="dum-no-data"><?php esc_html_e( 'No students found.', 'dream-university-management' ); ?></p>
+		<p class="dreaunma-no-data"><?php esc_html_e( 'No students found.', 'dream-university-management' ); ?></p>
 	<?php else : ?>
-		<div class="dum-students-grid">
+		<div class="dreaunma-students-grid">
 			<?php foreach ( $students as $student ) : ?>
 				<?php
-				$faculty = ! empty( $student->faculty_id ) ? DUM_Faculty::get( $student->faculty_id ) : null;
-				$department = ! empty( $student->department_id ) ? DUM_Department::get( $student->department_id ) : null;
+				$faculty = ! empty( $student->faculty_id ) ? DREAUNMA_Faculty::get( $student->faculty_id ) : null;
+				$department = ! empty( $student->department_id ) ? DREAUNMA_Department::get( $student->department_id ) : null;
 				$image_url = ! empty( $student->image ) ? $student->image : '';
 				?>
-				<div class="dum-student-card">
+				<div class="dreaunma-student-card">
 					<?php if ( ! empty( $image_url ) ) : ?>
-						<div class="dum-student-photo">
+						<div class="dreaunma-student-photo">
 							<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $student->first_name . ' ' . $student->last_name ); ?>">
 						</div>
 					<?php endif; ?>
-					<div class="dum-student-info">
-						<h3 class="dum-student-name">
+					<div class="dreaunma-student-info">
+						<h3 class="dreaunma-student-name">
 							<?php echo esc_html( $student->first_name . ' ' . $student->last_name ); ?>
 						</h3>
-						<div class="dum-student-details">
+						<div class="dreaunma-student-details">
 							<p><strong><?php esc_html_e( 'Student ID:', 'dream-university-management' ); ?></strong> <?php echo esc_html( $student->student_id ); ?></p>
 							<?php if ( ! empty( $student->email ) ) : ?>
 								<p><strong><?php esc_html_e( 'Email:', 'dream-university-management' ); ?></strong> <?php echo esc_html( $student->email ); ?></p>
@@ -50,8 +50,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<p><strong><?php esc_html_e( 'Semester:', 'dream-university-management' ); ?></strong> <?php echo esc_html( $student->semester ); ?></p>
 							<?php endif; ?>
 						</div>
-						<div class="dum-student-status">
-							<span class="dum-status-badge <?php echo esc_attr( $student->status ); ?>">
+						<div class="dreaunma-student-status">
+							<span class="dreaunma-status-badge <?php echo esc_attr( $student->status ); ?>">
 								<?php echo esc_html( ucfirst( $student->status ) ); ?>
 							</span>
 						</div>

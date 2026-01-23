@@ -1,6 +1,6 @@
 <?php
 /**
- * Staff management class
+ * Student management class
  *
  * @package Dream_University_Management
  */
@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Staff class
+ * Student class
  */
-class DUM_Staff {
+class DREAUNMA_Student {
 	
 	/**
 	 * Instance of this class
@@ -34,17 +34,17 @@ class DUM_Staff {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_post_dum_add_staff', array( $this, 'handle_add_staff' ) );
-		add_action( 'admin_post_dum_edit_staff', array( $this, 'handle_edit_staff' ) );
-		add_action( 'admin_post_dum_delete_staff', array( $this, 'handle_delete_staff' ) );
+		add_action( 'admin_post_dreaunma_add_student', array( $this, 'handle_add_student' ) );
+		add_action( 'admin_post_dreaunma_edit_student', array( $this, 'handle_edit_student' ) );
+		add_action( 'admin_post_dreaunma_delete_student', array( $this, 'handle_delete_student' ) );
 	}
 	
 	/**
-	 * Get all staff
+	 * Get all students
 	 */
 	public static function get_all( $args = array() ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_staff';
+		$table = $wpdb->prefix . 'dreaunma_students';
 		
 		$defaults = array(
 			'status' => 'all',
@@ -65,7 +65,7 @@ class DUM_Staff {
 		
 		if ( ! empty( $args['search'] ) ) {
 			$search = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where .= $wpdb->prepare( ' AND (staff_id LIKE %s OR first_name LIKE %s OR last_name LIKE %s OR email LIKE %s OR department LIKE %s OR position LIKE %s)', $search, $search, $search, $search, $search, $search );
+			$where .= $wpdb->prepare( ' AND (student_id LIKE %s OR first_name LIKE %s OR last_name LIKE %s OR email LIKE %s)', $search, $search, $search, $search );
 		}
 		
 		$orderby = sanitize_sql_orderby( $args['orderby'] . ' ' . $args['order'] );
@@ -85,21 +85,21 @@ class DUM_Staff {
 	}
 	
 	/**
-	 * Get staff by ID
+	 * Get student by ID
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_staff';
+		$table = $wpdb->prefix . 'dreaunma_students';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
 	
 	/**
-	 * Add staff
+	 * Add student
 	 */
 	public static function add( $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_staff';
+		$table = $wpdb->prefix . 'dreaunma_students';
 		
 		// Handle image from WordPress Media Library
 		$image_url = '';
@@ -110,7 +110,7 @@ class DUM_Staff {
 		}
 		
 		$insert_data = array(
-			'staff_id' => sanitize_text_field( $data['staff_id'] ),
+			'student_id' => sanitize_text_field( $data['student_id'] ),
 			'first_name' => sanitize_text_field( $data['first_name'] ),
 			'last_name' => sanitize_text_field( $data['last_name'] ),
 			'email' => sanitize_email( $data['email'] ),
@@ -119,9 +119,9 @@ class DUM_Staff {
 			'gender' => sanitize_text_field( $data['gender'] ?? '' ),
 			'address' => sanitize_textarea_field( $data['address'] ?? '' ),
 			'image' => $image_url,
-			'department' => sanitize_text_field( $data['department'] ?? '' ),
-			'position' => sanitize_text_field( $data['position'] ?? '' ),
-			'hire_date' => sanitize_text_field( $data['hire_date'] ?? '' ),
+			'faculty_id' => intval( $data['faculty_id'] ?? 0 ),
+			'department_id' => intval( $data['department_id'] ?? 0 ),
+			'admission_date' => sanitize_text_field( $data['admission_date'] ?? '' ),
 			'status' => sanitize_text_field( $data['status'] ?? 'active' ),
 		);
 		
@@ -129,11 +129,11 @@ class DUM_Staff {
 	}
 	
 	/**
-	 * Update staff
+	 * Update student
 	 */
 	public static function update( $id, $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_staff';
+		$table = $wpdb->prefix . 'dreaunma_students';
 		
 		// Handle image from WordPress Media Library
 		$image_url = '';
@@ -148,7 +148,7 @@ class DUM_Staff {
 		}
 		
 		$update_data = array(
-			'staff_id' => sanitize_text_field( $data['staff_id'] ),
+			'student_id' => sanitize_text_field( $data['student_id'] ),
 			'first_name' => sanitize_text_field( $data['first_name'] ),
 			'last_name' => sanitize_text_field( $data['last_name'] ),
 			'email' => sanitize_email( $data['email'] ),
@@ -157,9 +157,9 @@ class DUM_Staff {
 			'gender' => sanitize_text_field( $data['gender'] ?? '' ),
 			'address' => sanitize_textarea_field( $data['address'] ?? '' ),
 			'image' => $image_url,
-			'department' => sanitize_text_field( $data['department'] ?? '' ),
-			'position' => sanitize_text_field( $data['position'] ?? '' ),
-			'hire_date' => sanitize_text_field( $data['hire_date'] ?? '' ),
+			'faculty_id' => intval( $data['faculty_id'] ?? 0 ),
+			'department_id' => intval( $data['department_id'] ?? 0 ),
+			'admission_date' => sanitize_text_field( $data['admission_date'] ?? '' ),
 			'status' => sanitize_text_field( $data['status'] ?? 'active' ),
 		);
 		
@@ -167,20 +167,20 @@ class DUM_Staff {
 	}
 	
 	/**
-	 * Delete staff
+	 * Delete student
 	 */
 	public static function delete( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_staff';
+		$table = $wpdb->prefix . 'dreaunma_students';
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
 	
 	/**
-	 * Count staff
+	 * Count students
 	 */
 	public static function count( $status = 'all' ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_staff';
+		$table = $wpdb->prefix . 'dreaunma_students';
 		
 		if ( $status === 'all' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
@@ -192,42 +192,79 @@ class DUM_Staff {
 	}
 	
 	/**
-	 * Handle add staff
+	 * Handle add student
 	 */
-	public function handle_add_staff() {
-		check_admin_referer( 'dum_add_staff' );
+	public function handle_add_student() {
+		check_admin_referer( 'dreaunma_add_student' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$result = self::add( $_POST );
+		// Extract and sanitize only required fields
+		$data = array(
+			'student_id' => isset( $_POST['student_id'] ) ? sanitize_text_field( wp_unslash( $_POST['student_id'] ) ) : '',
+			'first_name' => isset( $_POST['first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['first_name'] ) ) : '',
+			'last_name' => isset( $_POST['last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['last_name'] ) ) : '',
+			'email' => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
+			'phone' => isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '',
+			'date_of_birth' => isset( $_POST['date_of_birth'] ) ? sanitize_text_field( wp_unslash( $_POST['date_of_birth'] ) ) : '',
+			'gender' => isset( $_POST['gender'] ) ? sanitize_text_field( wp_unslash( $_POST['gender'] ) ) : '',
+			'address' => isset( $_POST['address'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address'] ) ) : '',
+			'image_id' => isset( $_POST['image_id'] ) ? intval( $_POST['image_id'] ) : 0,
+			'image_url' => isset( $_POST['image_url'] ) ? esc_url_raw( wp_unslash( $_POST['image_url'] ) ) : '',
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'department_id' => isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0,
+			'admission_date' => isset( $_POST['admission_date'] ) ? sanitize_text_field( wp_unslash( $_POST['admission_date'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::add( $data );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-staff&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-students&message=added' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-staff&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-students&message=error' ) );
 		}
 		exit;
 	}
 	
 	/**
-	 * Handle edit staff
+	 * Handle edit student
 	 */
-	public function handle_edit_staff() {
-		check_admin_referer( 'dum_edit_staff' );
+	public function handle_edit_student() {
+		check_admin_referer( 'dreaunma_edit_student' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$id = isset( $_POST['staff_id'] ) ? intval( $_POST['staff_id'] ) : 0;
-		$result = self::update( $id, $_POST );
+		$id = isset( $_POST['student_id'] ) ? intval( $_POST['student_id'] ) : 0;
+		
+		// Extract and sanitize only required fields
+		$data = array(
+			'student_id' => isset( $_POST['student_id'] ) ? sanitize_text_field( wp_unslash( $_POST['student_id'] ) ) : '',
+			'first_name' => isset( $_POST['first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['first_name'] ) ) : '',
+			'last_name' => isset( $_POST['last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['last_name'] ) ) : '',
+			'email' => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
+			'phone' => isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '',
+			'date_of_birth' => isset( $_POST['date_of_birth'] ) ? sanitize_text_field( wp_unslash( $_POST['date_of_birth'] ) ) : '',
+			'gender' => isset( $_POST['gender'] ) ? sanitize_text_field( wp_unslash( $_POST['gender'] ) ) : '',
+			'address' => isset( $_POST['address'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address'] ) ) : '',
+			'image_id' => isset( $_POST['image_id'] ) ? intval( $_POST['image_id'] ) : 0,
+			'image_url' => isset( $_POST['image_url'] ) ? esc_url_raw( wp_unslash( $_POST['image_url'] ) ) : '',
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'department_id' => isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0,
+			'admission_date' => isset( $_POST['admission_date'] ) ? sanitize_text_field( wp_unslash( $_POST['admission_date'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::update( $id, $data );
 		
 		if ( $result !== false ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-staff&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-students&message=updated' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-staff&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-students&message=error' ) );
 		}
 		exit;
 	}
@@ -247,10 +284,10 @@ class DUM_Staff {
 	}
 	
 	/**
-	 * Handle delete staff
+	 * Handle delete student
 	 */
-	public function handle_delete_staff() {
-		check_admin_referer( 'dum_delete_staff' );
+	public function handle_delete_student() {
+		check_admin_referer( 'dreaunma_delete_student' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
@@ -260,9 +297,9 @@ class DUM_Staff {
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-staff&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-students&message=deleted' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-staff&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-students&message=error' ) );
 		}
 		exit;
 	}

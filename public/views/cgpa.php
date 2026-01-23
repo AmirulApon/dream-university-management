@@ -11,29 +11,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div class="dum-frontend-cgpa">
-	<div class="dum-cgpa-header">
+<div class="dreaunma-frontend-cgpa">
+	<div class="dreaunma-cgpa-header">
 		<h2><?php esc_html_e( 'Student Transcript', 'dream-university-management' ); ?></h2>
-		<div class="dum-student-info">
+		<div class="dreaunma-student-info">
 			<h3><?php echo esc_html( $student->first_name . ' ' . $student->last_name ); ?></h3>
 			<p><strong><?php esc_html_e( 'Student ID:', 'dream-university-management' ); ?></strong> <?php echo esc_html( $student->student_id ); ?></p>
 		</div>
 	</div>
 	
-	<div class="dum-cgpa-summary">
-		<div class="dum-cgpa-card">
+	<div class="dreaunma-cgpa-summary">
+		<div class="dreaunma-cgpa-card">
 			<h4><?php esc_html_e( 'CGPA', 'dream-university-management' ); ?></h4>
-			<div class="dum-cgpa-value"><?php echo esc_html( number_format( $cgpa_data['cgpa'], 2 ) ); ?></div>
-			<p class="dum-cgpa-details">
+			<div class="dreaunma-cgpa-value"><?php echo esc_html( number_format( $cgpa_data['cgpa'], 2 ) ); ?></div>
+			<p class="dreaunma-cgpa-details">
 				<?php esc_html_e( 'Total Credits:', 'dream-university-management' ); ?> <?php echo esc_html( $cgpa_data['total_credits'] ); ?>
 			</p>
 		</div>
 	</div>
 	
 	<?php if ( ! empty( $transcript ) ) : ?>
-		<div class="dum-transcript">
+		<div class="dreaunma-transcript">
 			<h3><?php esc_html_e( 'Course Details', 'dream-university-management' ); ?></h3>
-			<table class="dum-frontend-table">
+			<table class="dreaunma-frontend-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Course Code', 'dream-university-management' ); ?></th>
@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<td><?php echo esc_html( $record->total_marks ); ?></td>
 							<td><?php echo esc_html( $record->obtained_marks ); ?></td>
 							<td>
-								<span class="dum-grade-badge"><?php echo esc_html( $record->grade ); ?></span>
+								<span class="dreaunma-grade-badge"><?php echo esc_html( $record->grade ); ?></span>
 							</td>
 							<td><?php echo esc_html( $record->grade_point ); ?></td>
 						</tr>
@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</table>
 		</div>
 	<?php else : ?>
-		<p class="dum-no-data"><?php esc_html_e( 'No transcript data available.', 'dream-university-management' ); ?></p>
+		<p class="dreaunma-no-data"><?php esc_html_e( 'No transcript data available.', 'dream-university-management' ); ?></p>
 	<?php endif; ?>
 </div>
 

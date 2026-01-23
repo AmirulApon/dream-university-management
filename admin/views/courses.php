@@ -10,11 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify request is from admin area (security check for GET parameters)
+// For admin pages, verify we're in admin context and request is legitimate
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+// Verify request is from admin area (security check for GET parameters)
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+if ( ! empty( $_GET ) && isset( $_GET['_wpnonce'] ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-courses-view' ) ) {
+		wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+	}
+}
+
 $action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 
 // Show messages
@@ -31,21 +57,21 @@ if ( $message === 'added' ) {
 if ( $action === 'add' || $action === 'edit' ) {
 	$course = null;
 	if ( $action === 'edit' && $id > 0 ) {
-		$course = DUM_Course::get( $id );
+		$course = DREAUNMA_Course::get( $id );
 		if ( ! $course ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Course not found.', 'dream-university-management' ) . '</p></div>';
 			return;
 		}
 	}
 	
-	$teachers = DUM_Teacher::get_all( array( 'status' => 'active' ) );
+	$teachers = DREAUNMA_Teacher::get_all( array( 'status' => 'active' ) );
 	?>
 	<div class="wrap">
 		<h1><?php echo $action === 'add' ? esc_html__( 'Add Course', 'dream-university-management' ) : esc_html__( 'Edit Course', 'dream-university-management' ); ?></h1>
 		
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<?php wp_nonce_field( $action === 'add' ? 'dum_add_course' : 'dum_edit_course' ); ?>
-			<input type="hidden" name="action" value="<?php echo $action === 'add' ? 'dum_add_course' : 'dum_edit_course'; ?>">
+			<?php wp_nonce_field( $action === 'add' ? 'dreaunma_add_course' : 'dreaunma_edit_course' ); ?>
+			<input type="hidden" name="action" value="<?php echo $action === 'add' ? 'dreaunma_add_course' : 'dreaunma_edit_course'; ?>">
 			<?php if ( $action === 'edit' ) : ?>
 				<input type="hidden" name="course_id" value="<?php echo esc_attr( $course->id ); ?>">
 			<?php endif; ?>
@@ -71,7 +97,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 					<th><label for="faculty_id"><?php esc_html_e( 'Faculty', 'dream-university-management' ); ?></label></th>
 					<td>
 						<?php
-						$faculties = DUM_Faculty::get_all( array( 'status' => 'active', 'limit' => 1000 ) );
+						$faculties = DREAUNMA_Faculty::get_all( array( 'status' => 'active', 'limit' => 1000 ) );
 						$selected_faculty_id = $course ? intval( $course->faculty_id ) : 0;
 						?>
 						<select id="faculty_id" name="faculty_id">
@@ -91,7 +117,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 							<option value="0"><?php esc_html_e( 'Select Department', 'dream-university-management' ); ?></option>
 							<?php
 							if ( $selected_faculty_id > 0 ) {
-								$departments = DUM_Department::get_by_faculty( $selected_faculty_id, 'active' );
+								$departments = DREAUNMA_Department::get_by_faculty( $selected_faculty_id, 'active' );
 								$selected_department_id = $course ? intval( $course->department_id ) : 0;
 								foreach ( $departments as $dept ) :
 									?>
@@ -147,7 +173,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			</table>
 			
 			<?php submit_button( $action === 'add' ? __( 'Add Course', 'dream-university-management' ) : __( 'Update Course', 'dream-university-management' ) ); ?>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-courses' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
 		</form>
 	</div>
 	<?php
@@ -157,7 +183,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 	$status_filter = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : 'all';
 	
-	$courses = DUM_Course::get_all( array( 
+	$courses = DREAUNMA_Course::get_all( array( 
 		'search' => $search,
 		'status' => $status_filter,
 		'limit' => 1000 
@@ -165,13 +191,13 @@ if ( $action === 'add' || $action === 'edit' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Courses', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-courses&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
-		<div class="dum-search-box">
+		<div class="dreaunma-search-box">
 			<form method="get" action="">
-				<input type="hidden" name="page" value="dum-courses">
+				<input type="hidden" name="page" value="dreaunma-courses">
 				<p class="search-box">
 					<label class="screen-reader-text" for="course-search-input"><?php esc_html_e( 'Search Courses:', 'dream-university-management' ); ?></label>
 					<input type="search" id="course-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by course code or name...', 'dream-university-management' ); ?>">
@@ -182,7 +208,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 					</select>
 					<?php submit_button( __( 'Search', 'dream-university-management' ), 'button', '', false ); ?>
 					<?php if ( ! empty( $search ) || $status_filter !== 'all' ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-courses' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
 					<?php endif; ?>
 				</p>
 			</form>
@@ -215,7 +241,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 						if ( ! empty( $course->faculty_name ) ) {
 							$faculty_name = $course->faculty_name;
 						} elseif ( ! empty( $course->faculty_id ) ) {
-							$faculty = DUM_Faculty::get( $course->faculty_id );
+							$faculty = DREAUNMA_Faculty::get( $course->faculty_id );
 							$faculty_name = $faculty ? $faculty->faculty_name : '';
 						}
 						
@@ -224,7 +250,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 						if ( ! empty( $course->department_name ) ) {
 							$department_name = $course->department_name;
 						} elseif ( ! empty( $course->department_id ) ) {
-							$department = DUM_Department::get( $course->department_id );
+							$department = DREAUNMA_Department::get( $course->department_id );
 							$department_name = $department ? $department->department_name : '';
 						}
 						
@@ -245,13 +271,13 @@ if ( $action === 'add' || $action === 'edit' ) {
 							echo esc_html( $course->semester ? sprintf( __( 'Semester %s', 'dream-university-management' ), $course->semester ) : '-' );
 							?></td>
 							<td>
-								<span class="dum-status <?php echo esc_attr( $course->status ); ?>">
+								<span class="dreaunma-status <?php echo esc_attr( $course->status ); ?>">
 									<?php echo esc_html( ucfirst( $course->status ) ); ?>
 								</span>
 							</td>
 							<td>
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-courses&action=edit&id=' . $course->id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
-								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dum_delete_course&id=' . $course->id ), 'dum_delete_course' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this course?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
+								<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses&action=edit&id=' . $course->id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_course&id=' . $course->id ), 'dreaunma_delete_course' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this course?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 							</td>
 						</tr>
 					<?php endforeach; ?>

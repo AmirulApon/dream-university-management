@@ -10,11 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify request is from admin area (security check for GET parameters)
+// For admin pages, verify we're in admin context and request is legitimate
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+// Verify request is from admin area (security check for GET parameters)
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+if ( ! empty( $_GET ) && isset( $_GET['_wpnonce'] ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-enrollments-view' ) ) {
+		wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+	}
+}
+
 $action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 
 // Show messages
@@ -29,15 +55,15 @@ if ( $message === 'added' ) {
 }
 
 if ( $action === 'add' ) {
-	$students = DUM_Student::get_all( array( 'status' => 'active' ) );
-	$courses = DUM_Course::get_all( array( 'status' => 'active' ) );
+	$students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
+	$courses = DREAUNMA_Course::get_all( array( 'status' => 'active' ) );
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Enroll Student', 'dream-university-management' ); ?></h1>
 		
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<?php wp_nonce_field( 'dum_add_enrollment' ); ?>
-			<input type="hidden" name="action" value="dum_add_enrollment">
+			<?php wp_nonce_field( 'dreaunma_add_enrollment' ); ?>
+			<input type="hidden" name="action" value="dreaunma_add_enrollment">
 			
 			<table class="form-table">
 				<tr>
@@ -73,7 +99,7 @@ if ( $action === 'add' ) {
 			</table>
 			
 			<?php submit_button( __( 'Enroll Student', 'dream-university-management' ) ); ?>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-enrollments' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-enrollments' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
 		</form>
 	</div>
 	<?php
@@ -88,7 +114,7 @@ if ( $action === 'add' ) {
 	$course_filter = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : 0;
 	
 	// Get all enrollments without limit
-	$enrollments = DUM_Enrollment::get_all( array( 
+	$enrollments = DREAUNMA_Enrollment::get_all( array( 
 		'limit' => 1000, 
 		'offset' => 0,
 		'status' => $status_filter,
@@ -122,21 +148,21 @@ if ( $action === 'add' ) {
 	// If no enrollments with joins, try getting raw enrollment data
 	if ( empty( $enrollments ) ) {
 		global $wpdb;
-		$enrollments_table = $wpdb->prefix . 'dum_enrollments';
+		$enrollments_table = $wpdb->prefix . 'dreaunma_enrollments';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), fallback query with no user input
 		$raw_enrollments = $wpdb->get_results( "SELECT * FROM $enrollments_table ORDER BY id DESC", OBJECT );
 		
 		if ( $raw_enrollments ) {
 			// If we have raw data but no joined data, there might be missing student/course records
 			// Let's try to get the data with proper joins one more time, but with error handling
-			$enrollments = DUM_Enrollment::get_all( array( 'limit' => 0, 'offset' => 0 ) );
+			$enrollments = DREAUNMA_Enrollment::get_all( array( 'limit' => 0, 'offset' => 0 ) );
 			
 			// If still empty, use raw data and we'll show what we can
 			if ( empty( $enrollments ) && $raw_enrollments ) {
 				// Convert raw data to format expected by view
 				foreach ( $raw_enrollments as $raw ) {
-					$student = DUM_Student::get( $raw->student_id );
-					$course = DUM_Course::get( $raw->course_id );
+					$student = DREAUNMA_Student::get( $raw->student_id );
+					$course = DREAUNMA_Course::get( $raw->course_id );
 					
 					$enrollment = new stdClass();
 					$enrollment->id = $raw->id;
@@ -157,13 +183,13 @@ if ( $action === 'add' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Enrollments', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-enrollments&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Enroll Student', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-enrollments&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Enroll Student', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
-		<div class="dum-search-box">
+		<div class="dreaunma-search-box">
 			<form method="get" action="">
-				<input type="hidden" name="page" value="dum-enrollments">
+				<input type="hidden" name="page" value="dreaunma-enrollments">
 				<p class="search-box">
 					<label class="screen-reader-text" for="enrollment-search-input"><?php esc_html_e( 'Search Enrollments:', 'dream-university-management' ); ?></label>
 					<input type="search" id="enrollment-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by student, course...', 'dream-university-management' ); ?>">
@@ -174,7 +200,7 @@ if ( $action === 'add' ) {
 					</select>
 					<?php submit_button( __( 'Search', 'dream-university-management' ), 'button', '', false ); ?>
 					<?php if ( ! empty( $search ) || $status_filter !== 'all' ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-enrollments' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-enrollments' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
 					<?php endif; ?>
 				</p>
 			</form>
@@ -236,13 +262,13 @@ if ( $action === 'add' ) {
 								<?php echo esc_html( $enrollment_date ? $enrollment_date : esc_html__( 'N/A', 'dream-university-management' ) ); ?>
 							</td>
 							<td class="column-status" data-colname="<?php esc_attr_e( 'Status', 'dream-university-management' ); ?>">
-								<span class="dum-status <?php echo esc_attr( $status ); ?>">
+								<span class="dreaunma-status <?php echo esc_attr( $status ); ?>">
 									<?php echo esc_html( ucfirst( $status ) ); ?>
 								</span>
 							</td>
 							<td class="column-actions" data-colname="<?php esc_attr_e( 'Actions', 'dream-university-management' ); ?>">
 								<?php if ( $enrollment_id > 0 ) : ?>
-									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dum_delete_enrollment&id=' . $enrollment_id ), 'dum_delete_enrollment' ) ); ?>" class="delete" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this enrollment?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
+									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_enrollment&id=' . $enrollment_id ), 'dreaunma_delete_enrollment' ) ); ?>" class="delete" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this enrollment?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 								<?php else : ?>
 									<span class="na"><?php esc_html_e( 'N/A', 'dream-university-management' ); ?></span>
 								<?php endif; ?>

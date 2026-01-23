@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Teacher class
  */
-class DUM_Teacher {
+class DREAUNMA_Teacher {
 	
 	/**
 	 * Instance of this class
@@ -34,9 +34,9 @@ class DUM_Teacher {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_post_dum_add_teacher', array( $this, 'handle_add_teacher' ) );
-		add_action( 'admin_post_dum_edit_teacher', array( $this, 'handle_edit_teacher' ) );
-		add_action( 'admin_post_dum_delete_teacher', array( $this, 'handle_delete_teacher' ) );
+		add_action( 'admin_post_dreaunma_add_teacher', array( $this, 'handle_add_teacher' ) );
+		add_action( 'admin_post_dreaunma_edit_teacher', array( $this, 'handle_edit_teacher' ) );
+		add_action( 'admin_post_dreaunma_delete_teacher', array( $this, 'handle_delete_teacher' ) );
 	}
 	
 	/**
@@ -44,7 +44,7 @@ class DUM_Teacher {
 	 */
 	public static function get_all( $args = array() ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_teachers';
+		$table = $wpdb->prefix . 'dreaunma_teachers';
 		
 		$defaults = array(
 			'status' => 'all',
@@ -89,7 +89,7 @@ class DUM_Teacher {
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_teachers';
+		$table = $wpdb->prefix . 'dreaunma_teachers';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder, custom plugin table
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
@@ -99,7 +99,7 @@ class DUM_Teacher {
 	 */
 	public static function add( $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_teachers';
+		$table = $wpdb->prefix . 'dreaunma_teachers';
 		
 		// Handle image from WordPress Media Library
 		$image_url = '';
@@ -136,7 +136,7 @@ class DUM_Teacher {
 	 */
 	public static function update( $id, $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_teachers';
+		$table = $wpdb->prefix . 'dreaunma_teachers';
 		
 		// Handle image from WordPress Media Library
 		$image_url = '';
@@ -177,7 +177,7 @@ class DUM_Teacher {
 	 */
 	public static function delete( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_teachers';
+		$table = $wpdb->prefix . 'dreaunma_teachers';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
@@ -187,7 +187,7 @@ class DUM_Teacher {
 	 */
 	public static function count( $status = 'all' ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_teachers';
+		$table = $wpdb->prefix . 'dreaunma_teachers';
 		
 		if ( $status === 'all' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query, custom plugin table
@@ -202,18 +202,38 @@ class DUM_Teacher {
 	 * Handle add teacher
 	 */
 	public function handle_add_teacher() {
-		check_admin_referer( 'dum_add_teacher' );
+		check_admin_referer( 'dreaunma_add_teacher' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$result = self::add( $_POST );
+		// Extract and sanitize only required fields
+		$data = array(
+			'teacher_id' => isset( $_POST['teacher_id'] ) ? sanitize_text_field( wp_unslash( $_POST['teacher_id'] ) ) : '',
+			'first_name' => isset( $_POST['first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['first_name'] ) ) : '',
+			'last_name' => isset( $_POST['last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['last_name'] ) ) : '',
+			'email' => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
+			'phone' => isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '',
+			'date_of_birth' => isset( $_POST['date_of_birth'] ) ? sanitize_text_field( wp_unslash( $_POST['date_of_birth'] ) ) : '',
+			'gender' => isset( $_POST['gender'] ) ? sanitize_text_field( wp_unslash( $_POST['gender'] ) ) : '',
+			'address' => isset( $_POST['address'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address'] ) ) : '',
+			'image_id' => isset( $_POST['image_id'] ) ? intval( $_POST['image_id'] ) : 0,
+			'image_url' => isset( $_POST['image_url'] ) ? esc_url_raw( wp_unslash( $_POST['image_url'] ) ) : '',
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'department_id' => isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0,
+			'department' => isset( $_POST['department'] ) ? sanitize_text_field( wp_unslash( $_POST['department'] ) ) : '',
+			'designation' => isset( $_POST['designation'] ) ? sanitize_text_field( wp_unslash( $_POST['designation'] ) ) : '',
+			'hire_date' => isset( $_POST['hire_date'] ) ? sanitize_text_field( wp_unslash( $_POST['hire_date'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::add( $data );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-teachers&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-teachers&message=added' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-teachers&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-teachers&message=error' ) );
 		}
 		exit;
 	}
@@ -222,19 +242,40 @@ class DUM_Teacher {
 	 * Handle edit teacher
 	 */
 	public function handle_edit_teacher() {
-		check_admin_referer( 'dum_edit_teacher' );
+		check_admin_referer( 'dreaunma_edit_teacher' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = isset( $_POST['teacher_id'] ) ? intval( $_POST['teacher_id'] ) : 0;
-		$result = self::update( $id, $_POST );
+		
+		// Extract and sanitize only required fields
+		$data = array(
+			'teacher_id' => isset( $_POST['teacher_id'] ) ? sanitize_text_field( wp_unslash( $_POST['teacher_id'] ) ) : '',
+			'first_name' => isset( $_POST['first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['first_name'] ) ) : '',
+			'last_name' => isset( $_POST['last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['last_name'] ) ) : '',
+			'email' => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
+			'phone' => isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '',
+			'date_of_birth' => isset( $_POST['date_of_birth'] ) ? sanitize_text_field( wp_unslash( $_POST['date_of_birth'] ) ) : '',
+			'gender' => isset( $_POST['gender'] ) ? sanitize_text_field( wp_unslash( $_POST['gender'] ) ) : '',
+			'address' => isset( $_POST['address'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address'] ) ) : '',
+			'image_id' => isset( $_POST['image_id'] ) ? intval( $_POST['image_id'] ) : 0,
+			'image_url' => isset( $_POST['image_url'] ) ? esc_url_raw( wp_unslash( $_POST['image_url'] ) ) : '',
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'department_id' => isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0,
+			'department' => isset( $_POST['department'] ) ? sanitize_text_field( wp_unslash( $_POST['department'] ) ) : '',
+			'designation' => isset( $_POST['designation'] ) ? sanitize_text_field( wp_unslash( $_POST['designation'] ) ) : '',
+			'hire_date' => isset( $_POST['hire_date'] ) ? sanitize_text_field( wp_unslash( $_POST['hire_date'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::update( $id, $data );
 		
 		if ( $result !== false ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-teachers&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-teachers&message=updated' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-teachers&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-teachers&message=error' ) );
 		}
 		exit;
 	}
@@ -257,7 +298,7 @@ class DUM_Teacher {
 	 * Handle delete teacher
 	 */
 	public function handle_delete_teacher() {
-		check_admin_referer( 'dum_delete_teacher' );
+		check_admin_referer( 'dreaunma_delete_teacher' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
@@ -267,9 +308,9 @@ class DUM_Teacher {
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-teachers&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-teachers&message=deleted' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-teachers&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-teachers&message=error' ) );
 		}
 		exit;
 	}

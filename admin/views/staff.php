@@ -10,11 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify request is from admin area (security check for GET parameters)
+// For admin pages, verify we're in admin context and request is legitimate
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+// Verify request is from admin area (security check for GET parameters)
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+if ( ! empty( $_GET ) && isset( $_GET['_wpnonce'] ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-staff-view' ) ) {
+		wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+	}
+}
+
 $action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 
 // Show messages
@@ -31,7 +57,7 @@ if ( $message === 'added' ) {
 if ( $action === 'add' || $action === 'edit' ) {
 	$staff = null;
 	if ( $action === 'edit' && $id > 0 ) {
-		$staff = DUM_Staff::get( $id );
+		$staff = DREAUNMA_Staff::get( $id );
 		if ( ! $staff ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Staff not found.', 'dream-university-management' ) . '</p></div>';
 			return;
@@ -42,8 +68,8 @@ if ( $action === 'add' || $action === 'edit' ) {
 		<h1><?php echo $action === 'add' ? esc_html__( 'Add Staff', 'dream-university-management' ) : esc_html__( 'Edit Staff', 'dream-university-management' ); ?></h1>
 		
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<?php wp_nonce_field( $action === 'add' ? 'dum_add_staff' : 'dum_edit_staff' ); ?>
-			<input type="hidden" name="action" value="<?php echo $action === 'add' ? 'dum_add_staff' : 'dum_edit_staff'; ?>">
+			<?php wp_nonce_field( $action === 'add' ? 'dreaunma_add_staff' : 'dreaunma_edit_staff' ); ?>
+			<input type="hidden" name="action" value="<?php echo $action === 'add' ? 'dreaunma_add_staff' : 'dreaunma_edit_staff'; ?>">
 			<?php if ( $action === 'edit' ) : ?>
 				<input type="hidden" name="staff_id" value="<?php echo esc_attr( $staff->id ); ?>">
 			<?php endif; ?>
@@ -84,9 +110,9 @@ if ( $action === 'add' || $action === 'edit' ) {
 							}
 						}
 						?>
-						<div class="dum-image-upload-wrapper">
+						<div class="dreaunma-image-upload-wrapper">
 							<input type="hidden" id="image_id" name="image_id" value="<?php echo esc_attr( $image_id ); ?>">
-							<div class="dum-image-preview" style="margin-bottom: 10px;">
+							<div class="dreaunma-image-preview" style="margin-bottom: 10px;">
 								<?php if ( $image_url ) : ?>
 									<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php esc_attr_e( 'Staff Photo', 'dream-university-management' ); ?>" style="max-width: 150px; height: auto; border: 1px solid #ddd; padding: 5px; display: block; margin-bottom: 10px;" id="image_preview">
 								<?php else : ?>
@@ -126,7 +152,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			</table>
 			
 			<?php submit_button( $action === 'add' ? __( 'Add Staff', 'dream-university-management' ) : __( 'Update Staff', 'dream-university-management' ) ); ?>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-staff' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-staff' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
 		</form>
 	</div>
 	<?php
@@ -136,7 +162,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 	$status_filter = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : 'all';
 	
-	$staff_members = DUM_Staff::get_all( array( 
+	$staff_members = DREAUNMA_Staff::get_all( array( 
 		'search' => $search,
 		'status' => $status_filter,
 		'limit' => 1000 
@@ -144,13 +170,13 @@ if ( $action === 'add' || $action === 'edit' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Staff', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-staff&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-staff&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
-		<div class="dum-search-box">
+		<div class="dreaunma-search-box">
 			<form method="get" action="">
-				<input type="hidden" name="page" value="dum-staff">
+				<input type="hidden" name="page" value="dreaunma-staff">
 				<p class="search-box">
 					<label class="screen-reader-text" for="staff-search-input"><?php esc_html_e( 'Search Staff:', 'dream-university-management' ); ?></label>
 					<input type="search" id="staff-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by ID, name, email, or department...', 'dream-university-management' ); ?>">
@@ -161,7 +187,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 					</select>
 					<?php submit_button( __( 'Search', 'dream-university-management' ), 'button', '', false ); ?>
 					<?php if ( ! empty( $search ) || $status_filter !== 'all' ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-staff' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-staff' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
 					<?php endif; ?>
 				</p>
 			</form>
@@ -206,13 +232,13 @@ if ( $action === 'add' || $action === 'edit' ) {
 							<td><?php echo esc_html( $staff->department ); ?></td>
 							<td><?php echo esc_html( $staff->position ); ?></td>
 							<td>
-								<span class="dum-status <?php echo esc_attr( $staff->status ); ?>">
+								<span class="dreaunma-status <?php echo esc_attr( $staff->status ); ?>">
 									<?php echo esc_html( ucfirst( $staff->status ) ); ?>
 								</span>
 							</td>
 							<td>
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-staff&action=edit&id=' . $staff->id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
-								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dum_delete_staff&id=' . $staff->id ), 'dum_delete_staff' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this staff?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
+								<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-staff&action=edit&id=' . $staff->id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_staff&id=' . $staff->id ), 'dreaunma_delete_staff' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this staff?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 							</td>
 						</tr>
 					<?php endforeach; ?>

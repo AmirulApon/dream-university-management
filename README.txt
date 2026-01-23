@@ -1,5 +1,5 @@
 === Dream University Management ===
-Contributors: yourname
+Contributors: dreamscarnival
 Tags: university management, school management, student management, course management, cgpa calculator
 Requires at least: 6.3
 Tested up to: 6.9
@@ -44,12 +44,14 @@ The plugin uses a standard grading system:
 = Database Tables =
 
 The plugin creates the following database tables:
-* wp_dum_students - Student records
-* wp_dum_teachers - Teacher records
-* wp_dum_staff - Staff records
-* wp_dum_courses - Course information
-* wp_dum_enrollments - Student course enrollments
-* wp_dum_grades - Grade records
+* wp_dreaunma_students - Student records
+* wp_dreaunma_teachers - Teacher records
+* wp_dreaunma_staff - Staff records
+* wp_dreaunma_courses - Course information
+* wp_dreaunma_enrollments - Student course enrollments
+* wp_dreaunma_grades - Grade records
+* wp_dreaunma_faculties - Faculty records
+* wp_dreaunma_departments - Department records
 
 == Installation ==
 

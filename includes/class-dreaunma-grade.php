@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Grade class
  */
-class DUM_Grade {
+class DREAUNMA_Grade {
 	
 	/**
 	 * Instance of this class
@@ -34,9 +34,9 @@ class DUM_Grade {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_post_dum_add_grade', array( $this, 'handle_add_grade' ) );
-		add_action( 'admin_post_dum_edit_grade', array( $this, 'handle_edit_grade' ) );
-		add_action( 'admin_post_dum_delete_grade', array( $this, 'handle_delete_grade' ) );
+		add_action( 'admin_post_dreaunma_add_grade', array( $this, 'handle_add_grade' ) );
+		add_action( 'admin_post_dreaunma_edit_grade', array( $this, 'handle_edit_grade' ) );
+		add_action( 'admin_post_dreaunma_delete_grade', array( $this, 'handle_delete_grade' ) );
 	}
 	
 	/**
@@ -44,9 +44,9 @@ class DUM_Grade {
 	 */
 	public static function get_all( $args = array() ) {
 		global $wpdb;
-		$grades_table = $wpdb->prefix . 'dum_grades';
-		$students_table = $wpdb->prefix . 'dum_students';
-		$courses_table = $wpdb->prefix . 'dum_courses';
+		$grades_table = $wpdb->prefix . 'dreaunma_grades';
+		$students_table = $wpdb->prefix . 'dreaunma_students';
+		$courses_table = $wpdb->prefix . 'dreaunma_courses';
 		
 		$defaults = array(
 			'student_id' => 0,
@@ -132,7 +132,7 @@ class DUM_Grade {
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_grades';
+		$table = $wpdb->prefix . 'dreaunma_grades';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
@@ -142,7 +142,7 @@ class DUM_Grade {
 	 */
 	public static function get_by_enrollment( $enrollment_id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_grades';
+		$table = $wpdb->prefix . 'dreaunma_grades';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $enrollment_id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE enrollment_id = %d", $enrollment_id ) );
 	}
@@ -164,7 +164,7 @@ class DUM_Grade {
 			array( 'grade' => 'F', 'grade_point' => 0.0, 'min_percentage' => 0, 'max_percentage' => 39 ),
 		);
 		
-		$saved_settings = get_option( 'dum_grade_settings', array() );
+		$saved_settings = get_option( 'dreaunma_grade_settings', array() );
 		
 		if ( ! empty( $saved_settings ) && is_array( $saved_settings ) ) {
 			return $saved_settings;
@@ -230,8 +230,8 @@ class DUM_Grade {
 	 */
 	public static function add( $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_grades';
-		$enrollments_table = $wpdb->prefix . 'dum_enrollments';
+		$table = $wpdb->prefix . 'dreaunma_grades';
+		$enrollments_table = $wpdb->prefix . 'dreaunma_enrollments';
 		
 		$enrollment_id = intval( $data['enrollment_id'] );
 		
@@ -274,7 +274,7 @@ class DUM_Grade {
 	 */
 	public static function update( $id, $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_grades';
+		$table = $wpdb->prefix . 'dreaunma_grades';
 		
 		$midterm = floatval( $data['midterm_marks'] ?? 0 );
 		$final = floatval( $data['final_marks'] ?? 0 );
@@ -300,7 +300,7 @@ class DUM_Grade {
 	 */
 	public static function delete( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_grades';
+		$table = $wpdb->prefix . 'dreaunma_grades';
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
 	
@@ -308,19 +308,28 @@ class DUM_Grade {
 	 * Handle add grade
 	 */
 	public function handle_add_grade() {
-		check_admin_referer( 'dum_add_grade' );
+		check_admin_referer( 'dreaunma_add_grade' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$result = self::add( $_POST );
+		// Extract and sanitize only required fields
+		$data = array(
+			'enrollment_id' => isset( $_POST['enrollment_id'] ) ? intval( $_POST['enrollment_id'] ) : 0,
+			'midterm_marks' => isset( $_POST['midterm_marks'] ) ? floatval( $_POST['midterm_marks'] ) : 0,
+			'final_marks' => isset( $_POST['final_marks'] ) ? floatval( $_POST['final_marks'] ) : 0,
+			'assignment_marks' => isset( $_POST['assignment_marks'] ) ? floatval( $_POST['assignment_marks'] ) : 0,
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'completed',
+		);
+		
+		$result = self::add( $data );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-grades&message=added' ) );
 			exit;
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-grades&message=error' ) );
 			exit;
 		}
 	}
@@ -329,20 +338,29 @@ class DUM_Grade {
 	 * Handle edit grade
 	 */
 	public function handle_edit_grade() {
-		check_admin_referer( 'dum_edit_grade' );
+		check_admin_referer( 'dreaunma_edit_grade' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = isset( $_POST['grade_id'] ) ? intval( $_POST['grade_id'] ) : 0;
-		$result = self::update( $id, $_POST );
+		
+		// Extract and sanitize only required fields
+		$data = array(
+			'midterm_marks' => isset( $_POST['midterm_marks'] ) ? floatval( $_POST['midterm_marks'] ) : 0,
+			'final_marks' => isset( $_POST['final_marks'] ) ? floatval( $_POST['final_marks'] ) : 0,
+			'assignment_marks' => isset( $_POST['assignment_marks'] ) ? floatval( $_POST['assignment_marks'] ) : 0,
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'completed',
+		);
+		
+		$result = self::update( $id, $data );
 		
 		if ( $result !== false ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-grades&message=updated' ) );
 			exit;
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-grades&message=error' ) );
 			exit;
 		}
 	}
@@ -351,7 +369,7 @@ class DUM_Grade {
 	 * Handle delete grade
 	 */
 	public function handle_delete_grade() {
-		check_admin_referer( 'dum_delete_grade' );
+		check_admin_referer( 'dreaunma_delete_grade' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
@@ -361,10 +379,10 @@ class DUM_Grade {
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-grades&message=deleted' ) );
 			exit;
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-grades&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-grades&message=error' ) );
 			exit;
 		}
 	}

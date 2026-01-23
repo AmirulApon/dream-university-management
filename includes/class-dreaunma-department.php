@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Department class
  */
-class DUM_Department {
+class DREAUNMA_Department {
 	
 	/**
 	 * Instance of this class
@@ -34,9 +34,9 @@ class DUM_Department {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_post_dum_add_department', array( $this, 'handle_add_department' ) );
-		add_action( 'admin_post_dum_edit_department', array( $this, 'handle_edit_department' ) );
-		add_action( 'admin_post_dum_delete_department', array( $this, 'handle_delete_department' ) );
+		add_action( 'admin_post_dreaunma_add_department', array( $this, 'handle_add_department' ) );
+		add_action( 'admin_post_dreaunma_edit_department', array( $this, 'handle_edit_department' ) );
+		add_action( 'admin_post_dreaunma_delete_department', array( $this, 'handle_delete_department' ) );
 	}
 	
 	/**
@@ -44,8 +44,8 @@ class DUM_Department {
 	 */
 	public static function get_all( $args = array() ) {
 		global $wpdb;
-		$departments_table = $wpdb->prefix . 'dum_departments';
-		$faculties_table = $wpdb->prefix . 'dum_faculties';
+		$departments_table = $wpdb->prefix . 'dreaunma_departments';
+		$faculties_table = $wpdb->prefix . 'dreaunma_faculties';
 		
 		$defaults = array(
 			'faculty_id' => 0,
@@ -114,7 +114,7 @@ class DUM_Department {
 	 */
 	public static function get_by_faculty( $faculty_id, $status = 'active' ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_departments';
+		$table = $wpdb->prefix . 'dreaunma_departments';
 		
 		if ( $status === 'all' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $faculty_id is sanitized via %d placeholder
@@ -139,7 +139,7 @@ class DUM_Department {
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_departments';
+		$table = $wpdb->prefix . 'dreaunma_departments';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
@@ -149,7 +149,7 @@ class DUM_Department {
 	 */
 	public static function add( $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_departments';
+		$table = $wpdb->prefix . 'dreaunma_departments';
 		
 		$data = array(
 			'department_code' => sanitize_text_field( $data['department_code'] ),
@@ -167,7 +167,7 @@ class DUM_Department {
 	 */
 	public static function update( $id, $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_departments';
+		$table = $wpdb->prefix . 'dreaunma_departments';
 		
 		$data = array(
 			'department_code' => sanitize_text_field( $data['department_code'] ),
@@ -185,7 +185,7 @@ class DUM_Department {
 	 */
 	public static function delete( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_departments';
+		$table = $wpdb->prefix . 'dreaunma_departments';
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
 	
@@ -194,7 +194,7 @@ class DUM_Department {
 	 */
 	public static function count( $status = 'all', $faculty_id = 0 ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_departments';
+		$table = $wpdb->prefix . 'dreaunma_departments';
 		
 		if ( $faculty_id > 0 && $status === 'all' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $faculty_id is sanitized via %d placeholder
@@ -219,18 +219,27 @@ class DUM_Department {
 	 * Handle add department
 	 */
 	public function handle_add_department() {
-		check_admin_referer( 'dum_add_department' );
+		check_admin_referer( 'dreaunma_add_department' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$result = self::add( $_POST );
+		// Extract and sanitize only required fields
+		$data = array(
+			'department_code' => isset( $_POST['department_code'] ) ? sanitize_text_field( wp_unslash( $_POST['department_code'] ) ) : '',
+			'department_name' => isset( $_POST['department_name'] ) ? sanitize_text_field( wp_unslash( $_POST['department_name'] ) ) : '',
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'description' => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::add( $data );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-departments&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-departments&message=added' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-departments&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-departments&message=error' ) );
 		}
 		exit;
 	}
@@ -239,19 +248,29 @@ class DUM_Department {
 	 * Handle edit department
 	 */
 	public function handle_edit_department() {
-		check_admin_referer( 'dum_edit_department' );
+		check_admin_referer( 'dreaunma_edit_department' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0;
-		$result = self::update( $id, $_POST );
+		
+		// Extract and sanitize only required fields
+		$data = array(
+			'department_code' => isset( $_POST['department_code'] ) ? sanitize_text_field( wp_unslash( $_POST['department_code'] ) ) : '',
+			'department_name' => isset( $_POST['department_name'] ) ? sanitize_text_field( wp_unslash( $_POST['department_name'] ) ) : '',
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'description' => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::update( $id, $data );
 		
 		if ( $result !== false ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-departments&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-departments&message=updated' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-departments&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-departments&message=error' ) );
 		}
 		exit;
 	}
@@ -260,7 +279,7 @@ class DUM_Department {
 	 * Handle delete department
 	 */
 	public function handle_delete_department() {
-		check_admin_referer( 'dum_delete_department' );
+		check_admin_referer( 'dreaunma_delete_department' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
@@ -270,9 +289,9 @@ class DUM_Department {
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-departments&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-departments&message=deleted' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-departments&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-departments&message=error' ) );
 		}
 		exit;
 	}

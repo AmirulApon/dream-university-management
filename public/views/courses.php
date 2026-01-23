@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div class="dum-frontend-courses">
+<div class="dreaunma-frontend-courses">
 	<?php if ( empty( $courses ) ) : ?>
-		<p class="dum-no-data"><?php esc_html_e( 'No courses found.', 'dream-university-management' ); ?></p>
+		<p class="dreaunma-no-data"><?php esc_html_e( 'No courses found.', 'dream-university-management' ); ?></p>
 	<?php else : ?>
-		<table class="dum-frontend-table">
+		<table class="dreaunma-frontend-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Course Code', 'dream-university-management' ); ?></th>
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( ! empty( $course->faculty_name ) ) {
 						$faculty_name = $course->faculty_name;
 					} elseif ( ! empty( $course->faculty_id ) ) {
-						$faculty = DUM_Faculty::get( $course->faculty_id );
+						$faculty = DREAUNMA_Faculty::get( $course->faculty_id );
 						$faculty_name = $faculty ? $faculty->faculty_name : '-';
 					}
 					
@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( ! empty( $course->department_name ) ) {
 						$department_name = $course->department_name;
 					} elseif ( ! empty( $course->department_id ) ) {
-						$department = DUM_Department::get( $course->department_id );
+						$department = DREAUNMA_Department::get( $course->department_id );
 						$department_name = $department ? $department->department_name : '-';
 					}
 					?>
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						echo esc_html( $course->semester ? sprintf( __( 'Semester %s', 'dream-university-management' ), $course->semester ) : '-' );
 						?></td>
 						<td>
-							<span class="dum-status-badge <?php echo esc_attr( $course->status ); ?>">
+							<span class="dreaunma-status-badge <?php echo esc_attr( $course->status ); ?>">
 								<?php echo esc_html( ucfirst( $course->status ) ); ?>
 							</span>
 						</td>

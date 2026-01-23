@@ -10,18 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$student_count = DUM_Student::count();
-$teacher_count = DUM_Teacher::count();
-$staff_count = DUM_Staff::count();
-$course_count = DUM_Course::count();
-$active_students = DUM_Student::count( 'active' );
-$active_teachers = DUM_Teacher::count( 'active' );
+$student_count = DREAUNMA_Student::count();
+$teacher_count = DREAUNMA_Teacher::count();
+$staff_count = DREAUNMA_Staff::count();
+$course_count = DREAUNMA_Course::count();
+$active_students = DREAUNMA_Student::count( 'active' );
+$active_teachers = DREAUNMA_Teacher::count( 'active' );
 ?>
 
 <div class="wrap">
 	<h1><?php esc_html_e( 'Reports', 'dream-university-management' ); ?></h1>
 	
-	<div class="dum-reports">
+	<div class="dreaunma-reports">
 		<h2><?php esc_html_e( 'Overview Statistics', 'dream-university-management' ); ?></h2>
 		
 		<table class="wp-list-table widefat fixed striped">
@@ -49,21 +49,21 @@ $active_teachers = DUM_Teacher::count( 'active' );
 				<tr>
 					<td><strong><?php esc_html_e( 'Staff', 'dream-university-management' ); ?></strong></td>
 					<td><?php echo esc_html( $staff_count ); ?></td>
-					<td><?php echo esc_html( DUM_Staff::count( 'active' ) ); ?></td>
-					<td><?php echo esc_html( $staff_count - DUM_Staff::count( 'active' ) ); ?></td>
+					<td><?php echo esc_html( DREAUNMA_Staff::count( 'active' ) ); ?></td>
+					<td><?php echo esc_html( $staff_count - DREAUNMA_Staff::count( 'active' ) ); ?></td>
 				</tr>
 				<tr>
 					<td><strong><?php esc_html_e( 'Courses', 'dream-university-management' ); ?></strong></td>
 					<td><?php echo esc_html( $course_count ); ?></td>
-					<td><?php echo esc_html( DUM_Course::count( 'active' ) ); ?></td>
-					<td><?php echo esc_html( $course_count - DUM_Course::count( 'active' ) ); ?></td>
+					<td><?php echo esc_html( DREAUNMA_Course::count( 'active' ) ); ?></td>
+					<td><?php echo esc_html( $course_count - DREAUNMA_Course::count( 'active' ) ); ?></td>
 				</tr>
 			</tbody>
 		</table>
 		
 		<h2><?php esc_html_e( 'Top Students by CGPA', 'dream-university-management' ); ?></h2>
 		<?php
-		$top_students = DUM_CGPA::get_all_students_cgpa();
+		$top_students = DREAUNMA_CGPA::get_all_students_cgpa();
 		$top_students = array_slice( $top_students, 0, 10 );
 		if ( ! empty( $top_students ) ) :
 			?>

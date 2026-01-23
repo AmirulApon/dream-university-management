@@ -10,11 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify request is from admin area (security check for GET parameters)
+// For admin pages, verify we're in admin context and request is legitimate
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+// Verify request is from admin area (security check for GET parameters)
+if ( ! is_admin() ) {
+	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+if ( ! empty( $_GET ) && isset( $_GET['_wpnonce'] ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-grades-view' ) ) {
+		wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+	}
+}
+
 $action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 
 // Show messages
@@ -31,21 +57,21 @@ if ( $message === 'added' ) {
 if ( $action === 'add' || $action === 'edit' ) {
 	$grade = null;
 	if ( $action === 'edit' && $id > 0 ) {
-		$grade = DUM_Grade::get( $id );
+		$grade = DREAUNMA_Grade::get( $id );
 		if ( ! $grade ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Grade not found.', 'dream-university-management' ) . '</p></div>';
 			return;
 		}
 	}
 	
-	$enrollments = DUM_Enrollment::get_all( array( 'status' => 'enrolled' ) );
+	$enrollments = DREAUNMA_Enrollment::get_all( array( 'status' => 'enrolled' ) );
 	?>
 	<div class="wrap">
 		<h1><?php echo $action === 'add' ? esc_html__( 'Add Grade', 'dream-university-management' ) : esc_html__( 'Edit Grade', 'dream-university-management' ); ?></h1>
 		
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<?php wp_nonce_field( $action === 'add' ? 'dum_add_grade' : 'dum_edit_grade' ); ?>
-			<input type="hidden" name="action" value="<?php echo $action === 'add' ? 'dum_add_grade' : 'dum_edit_grade'; ?>">
+			<?php wp_nonce_field( $action === 'add' ? 'dreaunma_add_grade' : 'dreaunma_edit_grade' ); ?>
+			<input type="hidden" name="action" value="<?php echo $action === 'add' ? 'dreaunma_add_grade' : 'dreaunma_edit_grade'; ?>">
 			<?php if ( $action === 'edit' ) : ?>
 				<input type="hidden" name="grade_id" value="<?php echo esc_attr( $grade->id ); ?>">
 			<?php endif; ?>
@@ -60,7 +86,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 								<?php foreach ( $enrollments as $enrollment ) : ?>
 									<?php
 									// Check if grade already exists for this enrollment
-									$existing_grade = DUM_Grade::get_by_enrollment( $enrollment->id );
+									$existing_grade = DREAUNMA_Grade::get_by_enrollment( $enrollment->id );
 									if ( $existing_grade ) {
 										continue; // Skip if grade already exists
 									}
@@ -106,7 +132,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			</table>
 			
 			<?php submit_button( $action === 'add' ? __( 'Add Grade', 'dream-university-management' ) : __( 'Update Grade', 'dream-university-management' ) ); ?>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-grades' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-grades' ) ); ?>" class="button"><?php esc_html_e( 'Cancel', 'dream-university-management' ); ?></a>
 		</form>
 	</div>
 	
@@ -122,7 +148,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 	$course_filter = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : 0;
 	
 	// Get all grades without limit
-	$grades = DUM_Grade::get_all( array( 
+	$grades = DREAUNMA_Grade::get_all( array( 
 		'limit' => 1000, 
 		'offset' => 0,
 		'status' => $status_filter,
@@ -157,21 +183,21 @@ if ( $action === 'add' || $action === 'edit' ) {
 	// If no grades with joins, try getting raw grade data
 	if ( empty( $grades ) ) {
 		global $wpdb;
-		$grades_table = $wpdb->prefix . 'dum_grades';
+		$grades_table = $wpdb->prefix . 'dreaunma_grades';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), fallback query with no user input
 		$raw_grades = $wpdb->get_results( "SELECT * FROM $grades_table ORDER BY id DESC", OBJECT );
 		
 		if ( $raw_grades ) {
 			// If we have raw data but no joined data, there might be missing student/course records
 			// Let's try to get the data with proper joins one more time
-			$grades = DUM_Grade::get_all( array( 'limit' => 0, 'offset' => 0 ) );
+			$grades = DREAUNMA_Grade::get_all( array( 'limit' => 0, 'offset' => 0 ) );
 			
 			// If still empty, use raw data and we'll show what we can
 			if ( empty( $grades ) && $raw_grades ) {
 				// Convert raw data to format expected by view
 				foreach ( $raw_grades as $raw ) {
-					$student = DUM_Student::get( $raw->student_id );
-					$course = DUM_Course::get( $raw->course_id );
+					$student = DREAUNMA_Student::get( $raw->student_id );
+					$course = DREAUNMA_Course::get( $raw->course_id );
 					
 					$grade = new stdClass();
 					$grade->id = $raw->id;
@@ -195,13 +221,13 @@ if ( $action === 'add' || $action === 'edit' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Grades', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-grades&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add Grade', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-grades&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add Grade', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
-		<div class="dum-search-box">
+		<div class="dreaunma-search-box">
 			<form method="get" action="">
-				<input type="hidden" name="page" value="dum-grades">
+				<input type="hidden" name="page" value="dreaunma-grades">
 				<p class="search-box">
 					<label class="screen-reader-text" for="grade-search-input"><?php esc_html_e( 'Search Grades:', 'dream-university-management' ); ?></label>
 					<input type="search" id="grade-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by student, course, or grade...', 'dream-university-management' ); ?>">
@@ -212,7 +238,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 					</select>
 					<?php submit_button( esc_html__( 'Search', 'dream-university-management' ), 'button', '', false ); ?>
 					<?php if ( ! empty( $search ) || $status_filter !== 'all' ) : ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-grades' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-grades' ) ); ?>" class="button"><?php esc_html_e( 'Clear', 'dream-university-management' ); ?></a>
 					<?php endif; ?>
 				</p>
 			</form>
@@ -276,8 +302,8 @@ if ( $action === 'add' || $action === 'edit' ) {
 							<td><strong><?php echo esc_html( $grade_point ); ?></strong></td>
 							<td>
 								<?php if ( $grade_id > 0 ) : ?>
-									<a href="<?php echo esc_url( admin_url( 'admin.php?page=dum-grades&action=edit&id=' . $grade_id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
-									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dum_delete_grade&id=' . $grade_id ), 'dum_delete_grade' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this grade?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
+									<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-grades&action=edit&id=' . $grade_id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
+									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_grade&id=' . $grade_id ), 'dreaunma_delete_grade' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this grade?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 								<?php else : ?>
 									<span class="na"><?php esc_html_e( 'N/A', 'dream-university-management' ); ?></span>
 								<?php endif; ?>

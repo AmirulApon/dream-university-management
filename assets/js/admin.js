@@ -15,37 +15,37 @@
 				return;
 			}
 			
-			$departmentSelect.html('<option value="0">' + (dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.loading : 'Loading...') + '</option>');
+			$departmentSelect.html('<option value="0">' + (dreaunmaAdmin && dreaunmaAdmin.i18n ? dreaunmaAdmin.i18n.loading : 'Loading...') + '</option>');
 			
 			if (facultyId > 0 && typeof ajaxurl !== 'undefined') {
 				$.ajax({
 					url: ajaxurl,
 					type: 'POST',
 					data: {
-						action: 'dum_get_departments',
+						action: 'dreaunma_get_departments',
 						faculty_id: facultyId,
-						nonce: dumAdmin ? dumAdmin.nonce : ''
+						nonce: dreaunmaAdmin ? dreaunmaAdmin.nonce : ''
 					},
 					success: function(response) {
 						if (response.success && response.data) {
-							var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+							var selectText = dreaunmaAdmin && dreaunmaAdmin.i18n ? dreaunmaAdmin.i18n.selectDepartment : 'Select Department';
 							var options = '<option value="0">' + selectText + '</option>';
 							$.each(response.data, function(index, dept) {
 								options += '<option value="' + dept.id + '">' + dept.department_code + ' - ' + dept.department_name + '</option>';
 							});
 							$departmentSelect.html(options);
 						} else {
-							var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+							var selectText = dreaunmaAdmin && dreaunmaAdmin.i18n ? dreaunmaAdmin.i18n.selectDepartment : 'Select Department';
 							$departmentSelect.html('<option value="0">' + selectText + '</option>');
 						}
 					},
 					error: function() {
-						var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+						var selectText = dreaunmaAdmin && dreaunmaAdmin.i18n ? dreaunmaAdmin.i18n.selectDepartment : 'Select Department';
 						$departmentSelect.html('<option value="0">' + selectText + '</option>');
 					}
 				});
 			} else {
-				var selectText = dumAdmin && dumAdmin.i18n ? dumAdmin.i18n.selectDepartment : 'Select Department';
+				var selectText = dreaunmaAdmin && dreaunmaAdmin.i18n ? dreaunmaAdmin.i18n.selectDepartment : 'Select Department';
 				$departmentSelect.html('<option value="0">' + selectText + '</option>');
 			}
 		});

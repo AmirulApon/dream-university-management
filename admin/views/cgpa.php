@@ -12,15 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
 $student_id = isset( $_GET['student_id'] ) ? intval( $_GET['student_id'] ) : 0;
-$students = DUM_Student::get_all( array( 'status' => 'active' ) );
+$students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 ?>
 
 <div class="wrap">
 	<h1><?php esc_html_e( 'CGPA Calculator', 'dream-university-management' ); ?></h1>
 	
-	<div class="dum-cgpa-calculator">
+	<div class="dreaunma-cgpa-calculator">
 		<form method="get" action="">
-			<input type="hidden" name="page" value="dum-cgpa">
+			<input type="hidden" name="page" value="dreaunma-cgpa">
 			<table class="form-table">
 				<tr>
 					<th><label for="student_id"><?php esc_html_e( 'Select Student', 'dream-university-management' ); ?></label></th>
@@ -40,17 +40,17 @@ $students = DUM_Student::get_all( array( 'status' => 'active' ) );
 		
 		<?php if ( $student_id > 0 ) : ?>
 			<?php
-			$cgpa_data = DUM_CGPA::calculate( $student_id );
-			$transcript = DUM_CGPA::get_transcript( $student_id );
-			$student = DUM_Student::get( $student_id );
+			$cgpa_data = DREAUNMA_CGPA::calculate( $student_id );
+			$transcript = DREAUNMA_CGPA::get_transcript( $student_id );
+			$student = DREAUNMA_Student::get( $student_id );
 			?>
 			
-			<div class="dum-cgpa-result">
+			<div class="dreaunma-cgpa-result">
 				<h2><?php esc_html_e( 'CGPA Result', 'dream-university-management' ); ?></h2>
 				<?php if ( $student ) : ?>
 					<p><strong><?php esc_html_e( 'Student:', 'dream-university-management' ); ?></strong> <?php echo esc_html( $student->student_id . ' - ' . $student->first_name . ' ' . $student->last_name ); ?></p>
 				<?php endif; ?>
-				<p><strong><?php esc_html_e( 'CGPA:', 'dream-university-management' ); ?></strong> <span class="dum-cgpa-value"><?php echo esc_html( $cgpa_data['cgpa'] ); ?></span></p>
+				<p><strong><?php esc_html_e( 'CGPA:', 'dream-university-management' ); ?></strong> <span class="dreaunma-cgpa-value"><?php echo esc_html( $cgpa_data['cgpa'] ); ?></span></p>
 				<p><strong><?php esc_html_e( 'Total Credits:', 'dream-university-management' ); ?></strong> <?php echo esc_html( $cgpa_data['total_credits'] ); ?></p>
 			</div>
 			
@@ -94,7 +94,7 @@ $students = DUM_Student::get_all( array( 'status' => 'active' ) );
 		
 		<h2><?php esc_html_e( 'All Students CGPA', 'dream-university-management' ); ?></h2>
 		<?php
-		$all_cgpa = DUM_CGPA::get_all_students_cgpa();
+		$all_cgpa = DREAUNMA_CGPA::get_all_students_cgpa();
 		if ( ! empty( $all_cgpa ) ) :
 			?>
 			<table class="wp-list-table widefat fixed striped">

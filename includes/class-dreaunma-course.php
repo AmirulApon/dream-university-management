@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Course class
  */
-class DUM_Course {
+class DREAUNMA_Course {
 	
 	/**
 	 * Instance of this class
@@ -34,9 +34,9 @@ class DUM_Course {
 	 * Constructor
 	 */
 	private function __construct() {
-		add_action( 'admin_post_dum_add_course', array( $this, 'handle_add_course' ) );
-		add_action( 'admin_post_dum_edit_course', array( $this, 'handle_edit_course' ) );
-		add_action( 'admin_post_dum_delete_course', array( $this, 'handle_delete_course' ) );
+		add_action( 'admin_post_dreaunma_add_course', array( $this, 'handle_add_course' ) );
+		add_action( 'admin_post_dreaunma_edit_course', array( $this, 'handle_edit_course' ) );
+		add_action( 'admin_post_dreaunma_delete_course', array( $this, 'handle_delete_course' ) );
 	}
 	
 	/**
@@ -44,9 +44,9 @@ class DUM_Course {
 	 */
 	public static function get_all( $args = array() ) {
 		global $wpdb;
-		$courses_table = $wpdb->prefix . 'dum_courses';
-		$faculties_table = $wpdb->prefix . 'dum_faculties';
-		$departments_table = $wpdb->prefix . 'dum_departments';
+		$courses_table = $wpdb->prefix . 'dreaunma_courses';
+		$faculties_table = $wpdb->prefix . 'dreaunma_faculties';
+		$departments_table = $wpdb->prefix . 'dreaunma_departments';
 		
 		$defaults = array(
 			'status' => 'all',
@@ -115,7 +115,7 @@ class DUM_Course {
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_courses';
+		$table = $wpdb->prefix . 'dreaunma_courses';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), $id is sanitized via %d placeholder
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 	}
@@ -125,7 +125,7 @@ class DUM_Course {
 	 */
 	public static function add( $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_courses';
+		$table = $wpdb->prefix . 'dreaunma_courses';
 		
 		$data = array(
 			'course_code' => sanitize_text_field( $data['course_code'] ),
@@ -148,7 +148,7 @@ class DUM_Course {
 	 */
 	public static function update( $id, $data ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_courses';
+		$table = $wpdb->prefix . 'dreaunma_courses';
 		
 		$data = array(
 			'course_code' => sanitize_text_field( $data['course_code'] ),
@@ -171,7 +171,7 @@ class DUM_Course {
 	 */
 	public static function delete( $id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_courses';
+		$table = $wpdb->prefix . 'dreaunma_courses';
 		return $wpdb->delete( $table, array( 'id' => $id ) );
 	}
 	
@@ -180,7 +180,7 @@ class DUM_Course {
 	 */
 	public static function count( $status = 'all' ) {
 		global $wpdb;
-		$table = $wpdb->prefix . 'dum_courses';
+		$table = $wpdb->prefix . 'dreaunma_courses';
 		
 		if ( $status === 'all' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
@@ -195,18 +195,32 @@ class DUM_Course {
 	 * Handle add course
 	 */
 	public function handle_add_course() {
-		check_admin_referer( 'dum_add_course' );
+		check_admin_referer( 'dreaunma_add_course' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
-		$result = self::add( $_POST );
+		// Extract and sanitize only required fields
+		$data = array(
+			'course_code' => isset( $_POST['course_code'] ) ? sanitize_text_field( wp_unslash( $_POST['course_code'] ) ) : '',
+			'course_name' => isset( $_POST['course_name'] ) ? sanitize_text_field( wp_unslash( $_POST['course_name'] ) ) : '',
+			'description' => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'credits' => isset( $_POST['credits'] ) ? floatval( $_POST['credits'] ) : 0,
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'department_id' => isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0,
+			'department' => isset( $_POST['department'] ) ? sanitize_text_field( wp_unslash( $_POST['department'] ) ) : '',
+			'semester' => isset( $_POST['semester'] ) ? sanitize_text_field( wp_unslash( $_POST['semester'] ) ) : '',
+			'teacher_id' => isset( $_POST['teacher_id'] ) ? intval( $_POST['teacher_id'] ) : 0,
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::add( $data );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=added' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-courses&message=added' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-courses&message=error' ) );
 		}
 		exit;
 	}
@@ -215,19 +229,34 @@ class DUM_Course {
 	 * Handle edit course
 	 */
 	public function handle_edit_course() {
-		check_admin_referer( 'dum_edit_course' );
+		check_admin_referer( 'dreaunma_edit_course' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
 		}
 		
 		$id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
-		$result = self::update( $id, $_POST );
+		
+		// Extract and sanitize only required fields
+		$data = array(
+			'course_code' => isset( $_POST['course_code'] ) ? sanitize_text_field( wp_unslash( $_POST['course_code'] ) ) : '',
+			'course_name' => isset( $_POST['course_name'] ) ? sanitize_text_field( wp_unslash( $_POST['course_name'] ) ) : '',
+			'description' => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'credits' => isset( $_POST['credits'] ) ? floatval( $_POST['credits'] ) : 0,
+			'faculty_id' => isset( $_POST['faculty_id'] ) ? intval( $_POST['faculty_id'] ) : 0,
+			'department_id' => isset( $_POST['department_id'] ) ? intval( $_POST['department_id'] ) : 0,
+			'department' => isset( $_POST['department'] ) ? sanitize_text_field( wp_unslash( $_POST['department'] ) ) : '',
+			'semester' => isset( $_POST['semester'] ) ? sanitize_text_field( wp_unslash( $_POST['semester'] ) ) : '',
+			'teacher_id' => isset( $_POST['teacher_id'] ) ? intval( $_POST['teacher_id'] ) : 0,
+			'status' => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'active',
+		);
+		
+		$result = self::update( $id, $data );
 		
 		if ( $result !== false ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=updated' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-courses&message=updated' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-courses&message=error' ) );
 		}
 		exit;
 	}
@@ -236,7 +265,7 @@ class DUM_Course {
 	 * Handle delete course
 	 */
 	public function handle_delete_course() {
-		check_admin_referer( 'dum_delete_course' );
+		check_admin_referer( 'dreaunma_delete_course' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions.', 'dream-university-management' ) );
@@ -246,9 +275,9 @@ class DUM_Course {
 		$result = self::delete( $id );
 		
 		if ( $result ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=deleted' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-courses&message=deleted' ) );
 		} else {
-			wp_safe_redirect( admin_url( 'admin.php?page=dum-courses&message=error' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=dreaunma-courses&message=error' ) );
 		}
 		exit;
 	}

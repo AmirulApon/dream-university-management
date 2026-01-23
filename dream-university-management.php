@@ -21,10 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'DUM_VERSION', '1.0.0' );
-define( 'DUM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'DUM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'DUM_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'DREAUNMA_VERSION', '1.0.0' );
+define( 'DREAUNMA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'DREAUNMA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'DREAUNMA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * Main plugin class
@@ -73,18 +73,18 @@ class Dream_University_Management {
 	 * Include required files
 	 */
 	private function includes() {
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-database.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-admin.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-faculty.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-department.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-student.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-teacher.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-staff.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-course.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-enrollment.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-grade.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-cgpa.php';
-		require_once DUM_PLUGIN_DIR . 'includes/class-dum-frontend.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-database.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-admin.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-faculty.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-department.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-student.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-teacher.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-staff.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-course.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-enrollment.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-grade.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-cgpa.php';
+		require_once DREAUNMA_PLUGIN_DIR . 'includes/class-dreaunma-frontend.php';
 	}
 	
 	/**
@@ -92,36 +92,36 @@ class Dream_University_Management {
 	 */
 	private function init_classes() {
 		// Initialize database
-		DUM_Database::get_instance();
+		DREAUNMA_Database::get_instance();
 		
 		// Initialize admin
 		if ( is_admin() ) {
-			DUM_Admin::get_instance();
+			DREAUNMA_Admin::get_instance();
 		}
 		
 		// Initialize frontend
-		DUM_Frontend::get_instance();
+		DREAUNMA_Frontend::get_instance();
 		
 		// Initialize management classes
-		DUM_Faculty::get_instance();
-		DUM_Department::get_instance();
-		DUM_Student::get_instance();
-		DUM_Teacher::get_instance();
-		DUM_Staff::get_instance();
-		DUM_Course::get_instance();
-		DUM_Enrollment::get_instance();
-		DUM_Grade::get_instance();
-		DUM_CGPA::get_instance();
+		DREAUNMA_Faculty::get_instance();
+		DREAUNMA_Department::get_instance();
+		DREAUNMA_Student::get_instance();
+		DREAUNMA_Teacher::get_instance();
+		DREAUNMA_Staff::get_instance();
+		DREAUNMA_Course::get_instance();
+		DREAUNMA_Enrollment::get_instance();
+		DREAUNMA_Grade::get_instance();
+		DREAUNMA_CGPA::get_instance();
 		
 		// Add AJAX handlers
-		add_action( 'wp_ajax_dum_get_departments', array( $this, 'ajax_get_departments' ) );
+		add_action( 'wp_ajax_dreaunma_get_departments', array( $this, 'ajax_get_departments' ) );
 	}
 	
 	/**
 	 * AJAX handler to get departments by faculty
 	 */
 	public function ajax_get_departments() {
-		check_ajax_referer( 'dum-admin-nonce', 'nonce' );
+		check_ajax_referer( 'dreaunma-admin-nonce', 'nonce' );
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'dream-university-management' ) ) );
@@ -133,7 +133,7 @@ class Dream_University_Management {
 			wp_send_json_error( array( 'message' => __( 'Invalid faculty ID.', 'dream-university-management' ) ) );
 		}
 		
-		$departments = DUM_Department::get_by_faculty( $faculty_id, 'active' );
+		$departments = DREAUNMA_Department::get_by_faculty( $faculty_id, 'active' );
 		
 		$data = array();
 		foreach ( $departments as $dept ) {
@@ -152,11 +152,11 @@ class Dream_University_Management {
 	 */
 	public function activate() {
 		// Create database tables
-		DUM_Database::create_tables();
+		DREAUNMA_Database::create_tables();
 		
 		// Set default options
-		add_option( 'dum_version', DUM_VERSION );
-		add_option( 'dum_db_version', '1.0' );
+		add_option( 'dreaunma_version', DREAUNMA_VERSION );
+		add_option( 'dreaunma_db_version', '1.0' );
 		
 		// Flush rewrite rules
 		flush_rewrite_rules();
@@ -174,10 +174,10 @@ class Dream_University_Management {
 /**
  * Initialize the plugin
  */
-function dum_init() {
+function dreaunma_init() {
 	return Dream_University_Management::get_instance();
 }
 
 // Start the plugin
-dum_init();
+dreaunma_init();
 

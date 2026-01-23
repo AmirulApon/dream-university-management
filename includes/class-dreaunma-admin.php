@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Admin class
  */
-class DUM_Admin {
+class DREAUNMA_Admin {
 	
 	/**
 	 * Instance of this class
@@ -69,7 +69,7 @@ class DUM_Admin {
 			__( 'Faculties', 'dream-university-management' ),
 			__( 'Faculties', 'dream-university-management' ),
 			'manage_options',
-			'dum-faculties',
+			'dreaunma-faculties',
 			array( $this, 'faculties_page' )
 		);
 		
@@ -79,7 +79,7 @@ class DUM_Admin {
 			__( 'Departments', 'dream-university-management' ),
 			__( 'Departments', 'dream-university-management' ),
 			'manage_options',
-			'dum-departments',
+			'dreaunma-departments',
 			array( $this, 'departments_page' )
 		);
 		
@@ -89,7 +89,7 @@ class DUM_Admin {
 			__( 'Students', 'dream-university-management' ),
 			__( 'Students', 'dream-university-management' ),
 			'manage_options',
-			'dum-students',
+			'dreaunma-students',
 			array( $this, 'students_page' )
 		);
 		
@@ -99,7 +99,7 @@ class DUM_Admin {
 			__( 'Teachers', 'dream-university-management' ),
 			__( 'Teachers', 'dream-university-management' ),
 			'manage_options',
-			'dum-teachers',
+			'dreaunma-teachers',
 			array( $this, 'teachers_page' )
 		);
 		
@@ -109,7 +109,7 @@ class DUM_Admin {
 			__( 'Staff', 'dream-university-management' ),
 			__( 'Staff', 'dream-university-management' ),
 			'manage_options',
-			'dum-staff',
+			'dreaunma-staff',
 			array( $this, 'staff_page' )
 		);
 		
@@ -119,7 +119,7 @@ class DUM_Admin {
 			__( 'Courses', 'dream-university-management' ),
 			__( 'Courses', 'dream-university-management' ),
 			'manage_options',
-			'dum-courses',
+			'dreaunma-courses',
 			array( $this, 'courses_page' )
 		);
 		
@@ -129,7 +129,7 @@ class DUM_Admin {
 			__( 'Enrollments', 'dream-university-management' ),
 			__( 'Enrollments', 'dream-university-management' ),
 			'manage_options',
-			'dum-enrollments',
+			'dreaunma-enrollments',
 			array( $this, 'enrollments_page' )
 		);
 		
@@ -139,7 +139,7 @@ class DUM_Admin {
 			__( 'Grades', 'dream-university-management' ),
 			__( 'Grades', 'dream-university-management' ),
 			'manage_options',
-			'dum-grades',
+			'dreaunma-grades',
 			array( $this, 'grades_page' )
 		);
 		
@@ -149,7 +149,7 @@ class DUM_Admin {
 			__( 'CGPA Calculator', 'dream-university-management' ),
 			__( 'CGPA Calculator', 'dream-university-management' ),
 			'manage_options',
-			'dum-cgpa',
+			'dreaunma-cgpa',
 			array( $this, 'cgpa_page' )
 		);
 		
@@ -159,7 +159,7 @@ class DUM_Admin {
 			__( 'Reports', 'dream-university-management' ),
 			__( 'Reports', 'dream-university-management' ),
 			'manage_options',
-			'dum-reports',
+			'dreaunma-reports',
 			array( $this, 'reports_page' )
 		);
 		
@@ -169,7 +169,7 @@ class DUM_Admin {
 			__( 'Shortcodes', 'dream-university-management' ),
 			__( 'Shortcodes', 'dream-university-management' ),
 			'manage_options',
-			'dum-shortcodes',
+			'dreaunma-shortcodes',
 			array( $this, 'shortcodes_page' )
 		);
 		
@@ -179,7 +179,7 @@ class DUM_Admin {
 			__( 'Settings', 'dream-university-management' ),
 			__( 'Settings', 'dream-university-management' ),
 			'manage_options',
-			'dum-settings',
+			'dreaunma-settings',
 			array( $this, 'settings_page' )
 		);
 	}
@@ -189,31 +189,31 @@ class DUM_Admin {
 	 */
 	public function enqueue_admin_assets( $hook ) {
 		// Only load on our plugin pages
-		if ( strpos( $hook, 'dream-university' ) === false && strpos( $hook, 'dum-' ) === false ) {
+		if ( strpos( $hook, 'dream-university' ) === false && strpos( $hook, 'dreaunma-' ) === false ) {
 			return;
 		}
 		
 		wp_enqueue_style(
-			'dum-admin-style',
-			DUM_PLUGIN_URL . 'assets/css/admin.css',
+			'dreaunma-admin-style',
+			DREAUNMA_PLUGIN_URL . 'assets/css/admin.css',
 			array(),
-			DUM_VERSION
+			DREAUNMA_VERSION
 		);
 		
 		wp_enqueue_script(
-			'dum-admin-script',
-			DUM_PLUGIN_URL . 'assets/js/admin.js',
+			'dreaunma-admin-script',
+			DREAUNMA_PLUGIN_URL . 'assets/js/admin.js',
 			array( 'jquery' ),
-			DUM_VERSION,
+			DREAUNMA_VERSION,
 			true
 		);
 		
 		// Enqueue WordPress media uploader
 		wp_enqueue_media();
 		
-		wp_localize_script( 'dum-admin-script', 'dumAdmin', array(
+		wp_localize_script( 'dreaunma-admin-script', 'dreaunmaAdmin', array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce' => wp_create_nonce( 'dum-admin-nonce' ),
+			'nonce' => wp_create_nonce( 'dreaunma-admin-nonce' ),
 			'i18n' => array(
 				'loading' => __( 'Loading...', 'dream-university-management' ),
 				'selectDepartment' => __( 'Select Department', 'dream-university-management' ),
@@ -223,7 +223,7 @@ class DUM_Admin {
 		) );
 		
 		// Make ajaxurl available globally for older scripts
-		wp_add_inline_script( 'dum-admin-script', 'var ajaxurl = "' . esc_js( admin_url( 'admin-ajax.php' ) ) . '";', 'before' );
+		wp_add_inline_script( 'dreaunma-admin-script', 'var ajaxurl = "' . esc_js( admin_url( 'admin-ajax.php' ) ) . '";', 'before' );
 		
 		// Add page-specific inline scripts
 		$this->add_page_specific_scripts( $hook );
@@ -234,7 +234,7 @@ class DUM_Admin {
 	 */
 	private function add_page_specific_scripts( $hook ) {
 		// Dashboard copy-to-clipboard script
-		if ( strpos( $hook, 'dream-university' ) !== false || strpos( $hook, 'dum-shortcodes' ) !== false ) {
+		if ( strpos( $hook, 'dream-university' ) !== false || strpos( $hook, 'dreaunma-shortcodes' ) !== false ) {
 			$copy_script = "
 (function($) {
 	$(document).ready(function() {
@@ -265,13 +265,13 @@ class DUM_Admin {
 	});
 })(jQuery);
 			";
-			wp_add_inline_script( 'dum-admin-script', $copy_script );
+			wp_add_inline_script( 'dreaunma-admin-script', $copy_script );
 		}
 		
 		// Settings page grade management script
-		if ( strpos( $hook, 'dum-settings' ) !== false ) {
+		if ( strpos( $hook, 'dreaunma-settings' ) !== false ) {
 			// Get current grade settings count
-			$grade_settings = get_option( 'dum_grade_settings', array() );
+			$grade_settings = get_option( 'dreaunma_grade_settings', array() );
 			$grade_count = count( $grade_settings );
 			
 			$settings_script = "
@@ -286,7 +286,7 @@ class DUM_Admin {
 				'<td><input type=\"number\" name=\"grades[' + gradeIndex + '][grade_point]\" step=\"0.01\" min=\"0\" max=\"4\" class=\"small-text\" required style=\"width: 100%;\"></td>' +
 				'<td><input type=\"number\" name=\"grades[' + gradeIndex + '][min_percentage]\" step=\"0.01\" min=\"0\" max=\"100\" class=\"small-text min-percent-input\" required style=\"width: 100%;\"></td>' +
 				'<td><input type=\"number\" name=\"grades[' + gradeIndex + '][max_percentage]\" step=\"0.01\" min=\"0\" max=\"100\" class=\"small-text max-percent-input\" required style=\"width: 100%;\"></td>' +
-				'<td><strong class=\"range-display\">-</strong><br><button type=\"button\" class=\"button remove-grade-row\" style=\"margin-top: 5px;\">' + dumAdmin.i18n.remove + '</button></td>' +
+				'<td><strong class=\"range-display\">-</strong><br><button type=\"button\" class=\"button remove-grade-row\" style=\"margin-top: 5px;\">' + dreaunmaAdmin.i18n.remove + '</button></td>' +
 				'</tr>';
 			
 			$('#grade-settings-tbody').append(newRow);
@@ -298,7 +298,7 @@ class DUM_Admin {
 			if ($('#grade-settings-tbody tr').length > 1) {
 				$(this).closest('tr').remove();
 			} else {
-				alert(dumAdmin.i18n.minOneGrade);
+				alert(dreaunmaAdmin.i18n.minOneGrade);
 			}
 		});
 		
@@ -323,7 +323,7 @@ class DUM_Admin {
 				rangeDisplay.html(rangeText);
 			} else {
 				if ($('#grade-settings-tbody tr').length > 1) {
-					rangeDisplay.parent().html('<strong class=\"range-display\">' + rangeText + '</strong><br><button type=\"button\" class=\"button remove-grade-row\" style=\"margin-top: 5px;\">' + dumAdmin.i18n.remove + '</button>');
+					rangeDisplay.parent().html('<strong class=\"range-display\">' + rangeText + '</strong><br><button type=\"button\" class=\"button remove-grade-row\" style=\"margin-top: 5px;\">' + dreaunmaAdmin.i18n.remove + '</button>');
 				} else {
 					rangeDisplay.html(rangeText);
 				}
@@ -332,7 +332,7 @@ class DUM_Admin {
 	});
 })(jQuery);
 			";
-			wp_add_inline_script( 'dum-admin-script', $settings_script );
+			wp_add_inline_script( 'dreaunma-admin-script', $settings_script );
 		}
 	}
 	
@@ -340,91 +340,91 @@ class DUM_Admin {
 	 * Dashboard page
 	 */
 	public function dashboard_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/dashboard.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/dashboard.php';
 	}
 	
 	/**
 	 * Faculties page
 	 */
 	public function faculties_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/faculties.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/faculties.php';
 	}
 	
 	/**
 	 * Departments page
 	 */
 	public function departments_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/departments.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/departments.php';
 	}
 	
 	/**
 	 * Students page
 	 */
 	public function students_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/students.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/students.php';
 	}
 	
 	/**
 	 * Teachers page
 	 */
 	public function teachers_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/teachers.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/teachers.php';
 	}
 	
 	/**
 	 * Staff page
 	 */
 	public function staff_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/staff.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/staff.php';
 	}
 	
 	/**
 	 * Courses page
 	 */
 	public function courses_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/courses.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/courses.php';
 	}
 	
 	/**
 	 * Enrollments page
 	 */
 	public function enrollments_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/enrollments.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/enrollments.php';
 	}
 	
 	/**
 	 * Grades page
 	 */
 	public function grades_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/grades.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/grades.php';
 	}
 	
 	/**
 	 * CGPA page
 	 */
 	public function cgpa_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/cgpa.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/cgpa.php';
 	}
 	
 	/**
 	 * Reports page
 	 */
 	public function reports_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/reports.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/reports.php';
 	}
 	
 	/**
 	 * Shortcodes page
 	 */
 	public function shortcodes_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/shortcodes.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/shortcodes.php';
 	}
 	
 	/**
 	 * Settings page
 	 */
 	public function settings_page() {
-		include DUM_PLUGIN_DIR . 'admin/views/settings.php';
+		include DREAUNMA_PLUGIN_DIR . 'admin/views/settings.php';
 	}
 }
 

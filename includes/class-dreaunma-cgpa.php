@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * CGPA class
  */
-class DUM_CGPA {
+class DREAUNMA_CGPA {
 	
 	/**
 	 * Instance of this class
@@ -42,8 +42,8 @@ class DUM_CGPA {
 	 */
 	public static function calculate( $student_id ) {
 		global $wpdb;
-		$grades_table = $wpdb->prefix . 'dum_grades';
-		$courses_table = $wpdb->prefix . 'dum_courses';
+		$grades_table = $wpdb->prefix . 'dreaunma_grades';
+		$courses_table = $wpdb->prefix . 'dreaunma_courses';
 		
 		$query = "SELECT g.grade_point, c.credits
 				  FROM $grades_table g
@@ -86,9 +86,9 @@ class DUM_CGPA {
 	 */
 	public static function get_transcript( $student_id ) {
 		global $wpdb;
-		$grades_table = $wpdb->prefix . 'dum_grades';
-		$courses_table = $wpdb->prefix . 'dum_courses';
-		$students_table = $wpdb->prefix . 'dum_students';
+		$grades_table = $wpdb->prefix . 'dreaunma_grades';
+		$courses_table = $wpdb->prefix . 'dreaunma_courses';
+		$students_table = $wpdb->prefix . 'dreaunma_students';
 		
 		$query = "SELECT g.*, c.course_code, c.course_name, c.credits, c.semester,
 				  s.student_id, s.first_name, s.last_name
@@ -107,7 +107,7 @@ class DUM_CGPA {
 	 */
 	public static function get_all_students_cgpa() {
 		global $wpdb;
-		$students_table = $wpdb->prefix . 'dum_students';
+		$students_table = $wpdb->prefix . 'dreaunma_students';
 		
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
 		$students = $wpdb->get_results( "SELECT * FROM $students_table WHERE status = 'active'" );
