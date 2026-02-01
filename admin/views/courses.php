@@ -15,27 +15,13 @@ if ( ! current_user_can( 'manage_options' ) ) {
 	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
 }
 
-// Verify user permissions
-if ( ! current_user_can( 'manage_options' ) ) {
-	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
-}
+// Security check: Verify nonce for actions or filters
+$is_action = isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'add', 'edit' ), true );
+$has_filter_params = isset( $_GET['s'] ) || ( isset( $_GET['status'] ) && $_GET['status'] !== 'all' );
 
-// Verify request is from admin area (security check for GET parameters)
-// For admin pages, verify we're in admin context and request is legitimate
-if ( ! is_admin() ) {
-	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
-}
-
-// Verify nonce if present in GET parameters
-// Verify request is from admin area (security check for GET parameters)
-if ( ! is_admin() ) {
-	wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
-}
-
-// Verify nonce if present in GET parameters
-if ( ! empty( $_GET ) && isset( $_GET['_wpnonce'] ) ) {
-	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-courses-view' ) ) {
-		wp_die( esc_html__( 'Security check failed.', 'dream-university-management' ) );
+if ( $is_action || $has_filter_params ) {
+	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-courses-view' ) ) {
+		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) );
 	}
 }
 
@@ -191,13 +177,14 @@ if ( $action === 'add' || $action === 'edit' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Courses', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses&action=add' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-courses&action=add' ), 'dreaunma-courses-view' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
 		<div class="dreaunma-search-box">
 			<form method="get" action="">
 				<input type="hidden" name="page" value="dreaunma-courses">
+				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'dreaunma-courses-view' ) ); ?>">
 				<p class="search-box">
 					<label class="screen-reader-text" for="course-search-input"><?php esc_html_e( 'Search Courses:', 'dream-university-management' ); ?></label>
 					<input type="search" id="course-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by course code or name...', 'dream-university-management' ); ?>">
@@ -276,7 +263,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 								</span>
 							</td>
 							<td>
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses&action=edit&id=' . $course->id ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-courses&action=edit&id=' . $course->id ), 'dreaunma-courses-view' ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
 								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_course&id=' . $course->id ), 'dreaunma_delete_course' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this course?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 							</td>
 						</tr>

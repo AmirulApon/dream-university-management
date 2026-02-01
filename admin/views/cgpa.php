@@ -10,7 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- View file, not processing form data
+// Verify user permissions
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'dream-university-management' ) );
+}
+
+// Verify nonce if present in GET parameters
+if ( isset( $_GET['student_id'] ) ) {
+	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-cgpa-view' ) ) {
+		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) );
+	}
+}
+
 $student_id = isset( $_GET['student_id'] ) ? intval( $_GET['student_id'] ) : 0;
 $students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 ?>
@@ -21,6 +32,7 @@ $students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 	<div class="dreaunma-cgpa-calculator">
 		<form method="get" action="">
 			<input type="hidden" name="page" value="dreaunma-cgpa">
+			<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'dreaunma-cgpa-view' ) ); ?>">
 			<table class="form-table">
 				<tr>
 					<th><label for="student_id"><?php esc_html_e( 'Select Student', 'dream-university-management' ); ?></label></th>
