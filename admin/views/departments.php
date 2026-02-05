@@ -26,7 +26,7 @@ if ( $is_action || $has_filter_params ) {
 }
 
 $action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
-$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
+
 $message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 $faculty_filter = isset( $_GET['faculty_id'] ) ? intval( $_GET['faculty_id'] ) : 0;
 
@@ -42,6 +42,7 @@ if ( $message === 'added' ) {
 }
 
 if ( $action === 'add' || $action === 'edit' ) {
+	$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
 	$department = null;
 	if ( $action === 'edit' && $id > 0 ) {
 		$department = DREAUNMA_Department::get( $id );

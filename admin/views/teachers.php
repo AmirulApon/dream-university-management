@@ -26,7 +26,7 @@ if ( $is_action || $has_filter_params ) {
 }
 
 $action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
-$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
+
 $message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : '';
 
 // Show messages
@@ -41,6 +41,7 @@ if ( $message === 'added' ) {
 }
 
 if ( $action === 'add' || $action === 'edit' ) {
+	$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
 	$teacher = null;
 	if ( $action === 'edit' && $id > 0 ) {
 		$teacher = DREAUNMA_Teacher::get( $id );
