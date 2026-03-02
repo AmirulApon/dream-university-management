@@ -20,8 +20,8 @@ $is_action = isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'add'
 $has_filter_params = isset( $_GET['s'] ) || ( isset( $_GET['status'] ) && $_GET['status'] !== 'all' ) || ( isset( $_GET['student_id'] ) && $_GET['student_id'] != 0 ) || ( isset( $_GET['course_id'] ) && $_GET['course_id'] != 0 );
 
 if ( $is_action || $has_filter_params ) {
-	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-grades-view' ) ) {
-		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) );
+	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-grades' ) ) {
+		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=dreaunma-grades' ) ) . '">' . esc_html__( 'Go Back', 'dream-university-management' ) . '</a>' );
 	}
 }
 
@@ -208,14 +208,14 @@ if ( $action === 'add' || $action === 'edit' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Grades', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-grades&action=add' ), 'dreaunma-grades-view' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add Grade', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-grades&action=add' ), 'dreaunma-grades' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add Grade', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
 		<div class="dreaunma-search-box">
 			<form method="get" action="">
 				<input type="hidden" name="page" value="dreaunma-grades">
-				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'dreaunma-grades-view' ) ); ?>">
+				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'dreaunma-grades' ) ); ?>">
 				<p class="search-box">
 					<label class="screen-reader-text" for="grade-search-input"><?php esc_html_e( 'Search Grades:', 'dream-university-management' ); ?></label>
 					<input type="search" id="grade-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by student, course, or grade...', 'dream-university-management' ); ?>">
@@ -290,7 +290,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 							<td><strong><?php echo esc_html( $grade_point ); ?></strong></td>
 							<td>
 								<?php if ( $grade_id > 0 ) : ?>
-									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-grades&action=edit&id=' . $grade_id ), 'dreaunma-grades-view' ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
+									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-grades&action=edit&id=' . $grade_id ), 'dreaunma-grades' ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
 									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_grade&id=' . $grade_id ), 'dreaunma_delete_grade' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this grade?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 								<?php else : ?>
 									<span class="na"><?php esc_html_e( 'N/A', 'dream-university-management' ); ?></span>
@@ -302,6 +302,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 				</tbody>
 				<tfoot>
 					<tr>
+						<th scope="col"><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Student', 'dream-university-management' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Course', 'dream-university-management' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Midterm', 'dream-university-management' ); ?></th>

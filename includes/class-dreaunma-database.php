@@ -59,6 +59,8 @@ class DREAUNMA_Database {
 			address text DEFAULT NULL,
 			image varchar(255) DEFAULT NULL,
 			admission_date date DEFAULT NULL,
+			session varchar(50) DEFAULT NULL,
+			level varchar(20) DEFAULT NULL,
 			status varchar(20) DEFAULT 'active',
 			user_id bigint(20) UNSIGNED DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -241,6 +243,14 @@ class DREAUNMA_Database {
 		if ( empty( $image_column_exists ) ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
 			$wpdb->query( "ALTER TABLE $students_table ADD image varchar(255) DEFAULT NULL AFTER address" );
+		}
+		
+		// Add session and level columns to students table
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
+		$session_column_exists = $wpdb->get_results( "SHOW COLUMNS FROM $students_table LIKE 'session'" );
+		if ( empty( $session_column_exists ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- DDL statement, table name is safe (from $wpdb->prefix)
+			$wpdb->query( "ALTER TABLE $students_table ADD session varchar(50) DEFAULT NULL AFTER admission_date, ADD level varchar(20) DEFAULT NULL AFTER session" );
 		}
 		
 		// Add faculty_id and department_id to teachers table

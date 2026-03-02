@@ -21,7 +21,7 @@ $has_filter_params = isset( $_GET['s'] ) || ( isset( $_GET['status'] ) && $_GET[
 
 if ( $is_action || $has_filter_params ) {
 	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-enrollments-view' ) ) {
-		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) );
+		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=dreaunma-enrollments' ) ) . '">' . esc_html__( 'Go Back', 'dream-university-management' ) . '</a>' );
 	}
 }
 
@@ -265,6 +265,7 @@ if ( $action === 'add' ) {
 				</tbody>
 				<tfoot>
 					<tr>
+						<th scope="col" class="manage-column"><?php esc_html_e( 'ID', 'dream-university-management' ); ?></th>
 						<th scope="col" class="manage-column column-student"><?php esc_html_e( 'Student ID', 'dream-university-management' ); ?></th>
 						<th scope="col" class="manage-column column-student-name"><?php esc_html_e( 'Student Name', 'dream-university-management' ); ?></th>
 						<th scope="col" class="manage-column column-course-code"><?php esc_html_e( 'Course Code', 'dream-university-management' ); ?></th>

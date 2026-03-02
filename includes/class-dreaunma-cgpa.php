@@ -103,23 +103,83 @@ class DREAUNMA_CGPA {
 	}
 	
 	/**
-	 * Get all students with CGPA
+	 * Get all students with CGPA, optionally filtered by faculty, department, or course
 	 */
-	public static function get_all_students_cgpa() {
+	public static function get_all_students_cgpa( $faculty_id = 0, $department_id = 0, $course_id = 0 ) {
 		global $wpdb;
 		$students_table = $wpdb->prefix . 'dreaunma_students';
 		
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
-		$students = $wpdb->get_results( "SELECT * FROM $students_table WHERE status = 'active'" );
+		$where = array( "status = 'active'" );
+		$params = array();
+		
+		if ( $faculty_id > 0 ) {
+			$where[] = 'faculty_id = %d';
+			$params[] = $faculty_id;
+		}
+		
+		if ( $department_id > 0 ) {
+			$where[] = 'department_id = %d';
+			$params[] = $department_id;
+		}
+		
+		$where_clause = implode( ' AND ', $where );
+		$query = "SELECT * FROM $students_table WHERE $where_clause";
+		
+		if ( ! empty( $params ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- The query string is safely built and then prepared.
+			$students = $wpdb->get_results( $wpdb->prepare( $query, $params ) );
+		} else {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe (from $wpdb->prefix), no user input in query
+			$students = $wpdb->get_results( $query );
+		}
 		
 		$results = array();
 		foreach ( $students as $student ) {
-			$cgpa_data = self::calculate( $student->id );
-			$results[] = array(
-				'student' => $student,
-				'cgpa' => $cgpa_data['cgpa'],
-				'total_credits' => $cgpa_data['total_credits'],
-			);
+			if ( $course_id > 0 ) {
+				// If filtering by course, calculate CGPA only for this specific course
+				$grades_table = $wpdb->prefix . 'dreaunma_grades';
+				$courses_table = $wpdb->prefix . 'dreaunma_courses';
+				
+				$course_query = "SELECT g.grade_point, c.credits
+						  FROM $grades_table g
+						  INNER JOIN $courses_table c ON g.course_id = c.id
+						  WHERE g.student_id = %d AND g.course_id = %d AND g.status = 'completed'";
+				
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$course_results = $wpdb->get_results( $wpdb->prepare( $course_query, $student->id, $course_id ) );
+				
+				if ( empty( $course_results ) ) {
+					continue; // Skip student if they haven't completed this course
+				}
+				
+				$total_grade_points = 0;
+				$total_credits = 0;
+				
+				foreach ( $course_results as $result ) {
+					$grade_point = floatval( $result->grade_point );
+					$credits = floatval( $result->credits );
+					
+					$total_grade_points += ( $grade_point * $credits );
+					$total_credits += $credits;
+				}
+				
+				$cgpa = $total_credits > 0 ? ( $total_grade_points / $total_credits ) : 0.00;
+				$cgpa_data = array(
+					'cgpa' => round( $cgpa, 2 ),
+					'total_credits' => $total_credits,
+				);
+			} else {
+				$cgpa_data = self::calculate( $student->id );
+			}
+
+			// Only include students who have some credits
+			if ( $cgpa_data['total_credits'] > 0 ) {
+				$results[] = array(
+					'student' => $student,
+					'cgpa' => $cgpa_data['cgpa'],
+					'total_credits' => $cgpa_data['total_credits'],
+				);
+			}
 		}
 		
 		// Sort by CGPA descending

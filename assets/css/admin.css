@@ -577,3 +577,895 @@
 	}
 }
 
+/* ========================================================
+   PREMIUM ADMIN DASHBOARD STYLES (dreaunma- prefix)
+   ======================================================== */
+
+.dreaunma-dashboard {
+	margin-top: 20px;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	color: #1e1e1e;
+}
+
+.dreaunma-dashboard h2 {
+	font-weight: 700;
+	font-size: 1.4rem;
+	color: #1a1b1e;
+	margin-bottom: 20px;
+	letter-spacing: -0.02em;
+}
+
+/* 1. Stats Grid */
+.dreaunma-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 24px;
+	margin-bottom: 35px;
+}
+
+.dreaunma-stat-card {
+	position: relative;
+	background: #ffffff;
+	border-radius: 16px;
+	padding: 24px;
+	display: flex;
+	align-items: center;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	z-index: 1;
+}
+
+.dreaunma-stat-card::before {
+	content: '';
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	opacity: 0.1;
+	z-index: -1;
+	transition: opacity 0.3s ease;
+}
+
+.dreaunma-stat-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.dreaunma-stat-card:hover::before {
+	opacity: 0.15;
+}
+
+/* Card Varieties with Gradients */
+.dreaunma-stat-card:nth-child(1)::before { background: linear-gradient(135deg, #4f46e5, #818cf8); }
+.dreaunma-stat-card:nth-child(2)::before { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+.dreaunma-stat-card:nth-child(3)::before { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+.dreaunma-stat-card:nth-child(4)::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+.dreaunma-stat-icon {
+	width: 64px;
+	height: 64px;
+	border-radius: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 20px;
+	font-size: 32px;
+	color: #fff;
+	box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+	transition: transform 0.3s ease;
+}
+
+.dreaunma-stat-card:hover .dreaunma-stat-icon {
+	transform: scale(1.05) rotate(3deg);
+}
+
+.dreaunma-stat-icon.students { background: linear-gradient(135deg, #4f46e5, #818cf8); }
+.dreaunma-stat-icon.teachers { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+.dreaunma-stat-icon.staff { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+.dreaunma-stat-icon.courses { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+.dreaunma-stat-content {
+	flex-grow: 1;
+}
+
+.dreaunma-stat-content h3 {
+	margin: 0 0 4px 0;
+	font-size: 32px;
+	font-weight: 800;
+	color: #111827;
+	line-height: 1;
+	letter-spacing: -0.03em;
+}
+
+.dreaunma-stat-content p {
+	margin: 0 0 12px 0;
+	color: #6b7280;
+	font-size: 14px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.dreaunma-stat-content .dreaunma-stat-link {
+	display: inline-flex;
+	align-items: center;
+	font-size: 13px;
+	font-weight: 600;
+	color: #4f46e5;
+	text-decoration: none;
+	padding: 4px 10px;
+	background: rgba(79, 70, 229, 0.1);
+	border-radius: 20px;
+	transition: all 0.2s;
+}
+
+.dreaunma-stat-content .dreaunma-stat-link:hover {
+	background: #4f46e5;
+	color: #fff;
+}
+
+/* 2. Quick Actions Section */
+.dreaunma-quick-actions {
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255,255,255,0.5);
+	border-radius: 16px;
+	padding: 30px;
+	margin-bottom: 35px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.dreaunma-action-buttons {
+	display: flex;
+	gap: 15px;
+	flex-wrap: wrap;
+}
+
+.dreaunma-action-buttons .button-primary {
+	background: linear-gradient(135deg, #111827, #374151) !important;
+	border: none !important;
+	color: #fff !important;
+	padding: 8px 24px !important;
+	border-radius: 8px !important;
+	font-weight: 600 !important;
+	height: auto !important;
+	line-height: normal !important;
+	font-size: 14px !important;
+	box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2) !important;
+	transition: all 0.2s ease !important;
+}
+
+.dreaunma-action-buttons .button-primary:hover {
+	transform: translateY(-2px) !important;
+	box-shadow: 0 6px 16px rgba(17, 24, 39, 0.3) !important;
+	background: linear-gradient(135deg, #1f2937, #4b5563) !important;
+}
+
+/* 3. Shortcodes Grid */
+.dreaunma-dashboard-shortcodes {
+	background: #ffffff;
+	border-radius: 16px;
+	padding: 30px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.dreaunma-dashboard-shortcodes h2 {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #f3f4f6;
+	padding-bottom: 15px;
+}
+
+.dreaunma-dashboard-shortcodes h2 .button-secondary {
+	background: #f3f4f6 !important;
+	border: 1px solid #e5e7eb !important;
+	color: #4b5563 !important;
+	border-radius: 8px !important;
+	font-weight: 600 !important;
+	padding: 4px 16px !important;
+	transition: all 0.2s ease !important;
+}
+
+.dreaunma-dashboard-shortcodes h2 .button-secondary:hover {
+	background: #e5e7eb !important;
+	color: #111827 !important;
+}
+
+.dreaunma-dashboard-shortcodes > p {
+	color: #6b7280;
+	font-size: 15px;
+	margin-bottom: 25px;
+}
+
+.dreaunma-dashboard-shortcodes-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 20px;
+}
+
+.dreaunma-dashboard-shortcode-item {
+	background: #f8fafc;
+	border-radius: 12px;
+	padding: 20px;
+	border: 1px solid #f1f5f9;
+	transition: all 0.3s ease;
+}
+
+.dreaunma-dashboard-shortcode-item:hover {
+	background: #ffffff;
+	box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+	border-color: #e2e8f0;
+}
+
+.dreaunma-dashboard-shortcode-item h4 {
+	margin: 0 0 12px 0;
+	font-size: 15px;
+	color: #334155;
+	font-weight: 600;
+}
+
+.dreaunma-shortcode-box {
+	background: #1e293b;
+	border-radius: 8px;
+	padding: 12px 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.dreaunma-shortcode-box code {
+	color: #38bdf8;
+	font-family: 'Fira Code', 'Courier New', monospace;
+	font-size: 13px;
+	background: transparent;
+	padding: 0;
+	border: none;
+}
+
+.dreaunma-copy-btn {
+	background: rgba(255,255,255,0.1);
+	border: none;
+	color: #94a3b8;
+	border-radius: 6px;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.dreaunma-copy-btn:hover {
+	background: rgba(255,255,255,0.2);
+	color: #fff;
+	transform: scale(1.05);
+}
+
+.dreaunma-copy-btn .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* Animations */
+@keyframes fadeInSlideUp {
+	from { opacity: 0; transform: translateY(20px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.dreaunma-stat-card {
+	animation: fadeInSlideUp 0.6s ease-out forwards;
+}
+
+.dreaunma-stat-card:nth-child(1) { animation-delay: 0.1s; }
+.dreaunma-stat-card:nth-child(2) { animation-delay: 0.2s; }
+.dreaunma-stat-card:nth-child(3) { animation-delay: 0.3s; }
+.dreaunma-stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* ========================================================
+   PREMIUM ADMIN UI STYLES (Applies to DUM plugin pages)
+   ======================================================== */
+
+/* Page Headers & Actions */
+.wrap .wp-heading-inline {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-weight: 800;
+	font-size: 28px;
+	color: #111827;
+	letter-spacing: -0.02em;
+	margin-right: 15px;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.wrap .page-title-action {
+	background: linear-gradient(135deg, #4f46e5, #6366f1);
+	border: none;
+	color: #fff;
+	padding: 6px 16px;
+	border-radius: 8px;
+	font-weight: 600;
+	box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+	transition: all 0.2s ease;
+	margin-left: 0;
+}
+
+.wrap .page-title-action:hover {
+	background: linear-gradient(135deg, #4338ca, #4f46e5);
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+}
+
+.wp-header-end {
+	display: none;
+}
+
+/* Search Box Container */
+.dreaunma-search-box, .dum-search-box {
+	background: #ffffff;
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	border-radius: 12px;
+	padding: 16px 20px;
+	margin: 20px 0;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+	display: flex;
+	align-items: center;
+}
+
+.dreaunma-search-box .search-box, .dum-search-box .search-box {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	margin: 0;
+}
+
+/* Form Inputs & Selects */
+input[type="text"].regular-text, 
+input[type="email"].regular-text, 
+input[type="search"], 
+input[type="password"], 
+input[type="number"],
+input[type="date"],
+select, 
+textarea {
+	border-radius: 8px;
+	border: 1px solid #d1d5db;
+	padding: 10px 14px;
+	font-size: 14px;
+	transition: all 0.2s ease;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.02) inset;
+	background-color: #f9fafb;
+}
+
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="search"]:focus, 
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus, 
+textarea:focus {
+	border-color: #6366f1;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+	background-color: #ffffff;
+	outline: none;
+}
+
+select {
+	appearance: auto;
+	padding-right: 32px;
+	min-height: 40px;
+}
+
+.dreaunma-search-box .search-box select, .dum-search-box .search-box select,
+.dreaunma-search-box .search-box input[type="search"], .dum-search-box .search-box input[type="search"],
+.dreaunma-search-box .search-box .button, .dum-search-box .search-box .button {
+	height: 42px;
+	line-height: normal;
+}
+
+/* WP List Tables (Data Tables) */
+.wp-list-table {
+	background: #ffffff !important;
+	border: 1px solid #e2e8f0 !important;
+	border-radius: 12px !important;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.03) !important;
+	overflow: hidden !important;
+	border-collapse: separate !important;
+	border-spacing: 0 !important;
+	margin-top: 10px !important;
+}
+
+.wp-list-table thead th, .wp-list-table tfoot th {
+	background: #f8fafc !important;
+	color: #334155 !important;
+	font-weight: 600 !important;
+	text-transform: uppercase !important;
+	font-size: 12px !important;
+	letter-spacing: 0.05em !important;
+	padding: 16px 15px !important;
+	border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.wp-list-table tbody td, .wp-list-table tbody th {
+	padding: 16px 15px !important;
+	vertical-align: middle !important;
+	color: #475569 !important;
+	border-bottom: 1px solid #f1f5f9 !important;
+	transition: background-color 0.2s ease;
+}
+
+.wp-list-table tbody tr:last-child td, .wp-list-table tbody tr:last-child th {
+	border-bottom: none !important;
+}
+
+.wp-list-table tbody tr:hover td, .wp-list-table tbody tr:hover th {
+	background-color: #f8fafc !important;
+}
+
+/* Table Actions (Edit / Delete) */
+.wp-list-table td a {
+	font-weight: 500;
+	transition: color 0.2s ease;
+	text-decoration: none;
+}
+
+.wp-list-table td a[href*="action=edit"] {
+	color: #4f46e5;
+}
+
+.wp-list-table td a[href*="action=edit"]:hover {
+	color: #3730a3;
+}
+
+.wp-list-table td a[href*="action=delete"], .wp-list-table td a[onclick*="delete"] {
+	color: #ef4444;
+}
+
+.wp-list-table td a[href*="action=delete"]:hover, .wp-list-table td a[onclick*="delete"]:hover {
+	color: #b91c1c;
+}
+
+.wp-list-table .dashicons {
+	color: #94a3b8;
+	transition: color 0.2s ease;
+}
+
+/* Form Tables (Add/Edit Pages) */
+.form-table {
+	background: #ffffff;
+	border-radius: 12px;
+	padding: 0;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+	border: 1px solid #e2e8f0;
+	margin-top: 20px;
+	border-collapse: collapse;
+}
+
+.form-table th {
+	color: #334155;
+	font-weight: 600;
+	padding: 20px 24px;
+	width: 200px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.form-table td {
+	padding: 20px 24px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.form-table tr:last-child th,
+.form-table tr:last-child td {
+	border-bottom: none;
+}
+
+/* Submit Buttons */
+.submit .button-primary, p.submit .button-primary, input[type="submit"].button-primary {
+	background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+	border: none !important;
+	color: #fff !important;
+	padding: 6px 24px !important;
+	border-radius: 8px !important;
+	font-weight: 600 !important;
+	box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+	transition: all 0.2s ease !important;
+	font-size: 14px !important;
+}
+
+.submit .button-primary:hover, p.submit .button-primary:hover, input[type="submit"].button-primary:hover {
+	transform: translateY(-2px) !important;
+	box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35) !important;
+	background: linear-gradient(135deg, #4338ca, #4f46e5) !important;
+}
+
+.button, .button-secondary {
+	border-radius: 8px !important;
+	padding: 4px 16px !important;
+	font-weight: 500 !important;
+	transition: all 0.2s ease !important;
+}
+
+.button:hover, .button-secondary:hover {
+	border-color: #94a3b8 !important;
+	color: #0f172a !important;
+}
+
+/* Notices */
+.notice {
+	border-radius: 8px !important;
+	border-left-width: 4px !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+	background: #fff !important;
+	padding: 12px 16px !important;
+	margin: 15px 0 20px 0 !important;
+	animation: fadeInSlideUp 0.4s ease-out forwards;
+}
+
+.notice-success {
+	border-left-color: #10b981 !important;
+}
+
+.notice-error {
+	border-left-color: #ef4444 !important;
+}
+
+/* Common Status Badges */
+.dreaunma-status {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 20px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.dreaunma-status.active {
+	background: rgba(16, 185, 129, 0.1);
+	color: #059669;
+	border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.dreaunma-status.inactive {
+	background: rgba(239, 68, 68, 0.1);
+	color: #dc2626;
+	border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.dreaunma-status.enrolled, .dreaunma-status.pending {
+	background: rgba(245, 158, 11, 0.1);
+	color: #d97706;
+	border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.dreaunma-status.completed {
+	background: rgba(59, 130, 246, 0.1);
+	color: #2563eb;
+	border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* ========================================================
+   REPORTS & SETTINGS & SHORTCODES STYLES
+   ======================================================== */
+
+/* Reports overview and Top students table */
+.dreaunma-reports {
+	background: #ffffff;
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	border-radius: 12px;
+	padding: 24px;
+	margin-top: 20px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.dreaunma-reports h2 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-weight: 700;
+	color: #1e293b;
+	font-size: 1.25rem;
+}
+
+.dreaunma-reports h2:not(:first-child) {
+	margin-top: 40px;
+	padding-top: 30px;
+	border-top: 1px solid #f1f5f9;
+}
+
+/* Settings tables */
+.form-table {
+	background: #ffffff;
+	border-radius: 8px;
+	padding: 16px 24px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	border: 1px solid #e2e8f0;
+	margin-top: 15px;
+	margin-bottom: 30px;
+	width: 100%;
+}
+
+.form-table th, 
+.form-table td {
+	padding: 16px 20px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.form-table tr:last-child th,
+.form-table tr:last-child td {
+	border-bottom: none;
+}
+
+.form-table th[scope="row"] {
+	font-weight: 600;
+	color: #334155;
+	font-size: 13px;
+	width: 250px;
+}
+
+.form-table td {
+	color: #475569;
+	font-size: 13px;
+}
+
+.wrap > h2 {
+	font-size: 16px;
+	font-weight: 700;
+	color: #334155;
+	margin-top: 30px;
+	margin-bottom: 10px;
+}
+
+/* Add Grade row button */
+#add-grade-row {
+	background: #ffffff;
+	border: 1px dashed #cbd5e1 !important;
+	color: #475569 !important;
+}
+
+#add-grade-row:hover {
+	border-color: #64748b !important;
+	color: #1e293b !important;
+	background: #f8fafc;
+}
+
+/* Shortcodes Page Styles */
+.dreaunma-shortcodes-page {
+	margin-top: 20px;
+}
+
+.dreaunma-shortcodes-intro {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-left: 4px solid #4f46e5;
+	border-radius: 8px;
+	padding: 16px 24px;
+	margin-bottom: 30px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.dreaunma-shortcodes-intro p {
+	font-size: 15px;
+	color: #475569;
+	margin: 0;
+}
+
+.dreaunma-shortcodes-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+	gap: 25px;
+	margin-bottom: 40px;
+}
+
+.dreaunma-shortcode-card {
+	background: #ffffff;
+	border-radius: 12px;
+	border: 1px solid #e2e8f0;
+	box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+	overflow: hidden;
+	transition: all 0.3s ease;
+}
+
+.dreaunma-shortcode-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 25px rgba(0,0,0,0.06);
+	border-color: #cbd5e1;
+}
+
+.dreaunma-shortcode-header {
+	background: #f8fafc;
+	padding: 18px 24px;
+	border-bottom: 1px solid #e2e8f0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.dreaunma-shortcode-header h3 {
+	margin: 0;
+	font-size: 1.15em;
+	font-weight: 700;
+	color: #1e293b;
+}
+
+.dreaunma-shortcode-badge {
+	background: linear-gradient(135deg, #10b981, #059669);
+	color: #fff;
+	padding: 4px 12px;
+	border-radius: 20px;
+	font-size: 0.75em;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.dreaunma-shortcode-content {
+	padding: 24px;
+}
+
+.dreaunma-shortcode-description {
+	margin: 0 0 20px 0;
+	color: #64748b;
+	line-height: 1.6;
+	font-size: 14px;
+}
+
+.dreaunma-shortcode-box {
+	background: #0f172a;
+	border-radius: 8px;
+	padding: 14px 16px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.dreaunma-shortcode-box code {
+	color: #38bdf8;
+	font-size: 14px;
+	font-family: 'Fira Code', 'Courier New', monospace;
+	background: transparent;
+	padding: 0;
+	flex: 1;
+	border: none;
+}
+
+.dreaunma-shortcode-box .dreaunma-copy-btn {
+	background: rgba(255,255,255,0.1);
+	border: none;
+	color: #94a3b8;
+	border-radius: 6px;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.dreaunma-shortcode-box .dreaunma-copy-btn:hover {
+	background: rgba(255,255,255,0.2);
+	color: #fff;
+	transform: scale(1.05);
+}
+
+.dreaunma-shortcode-params {
+	margin-bottom: 20px;
+	background: #f8fafc;
+	padding: 16px;
+	border-radius: 8px;
+	border: 1px solid #f1f5f9;
+}
+
+.dreaunma-shortcode-params strong {
+	display: block;
+	margin-bottom: 12px;
+	color: #334155;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.dreaunma-shortcode-params ul {
+	margin: 0;
+	padding-left: 20px;
+	list-style-type: square;
+}
+
+.dreaunma-shortcode-params li {
+	margin: 6px 0;
+	color: #475569;
+	font-size: 13px;
+}
+
+.dreaunma-shortcode-params code {
+	background: #e2e8f0;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 0.9em;
+	color: #ef4444;
+	font-weight: 500;
+}
+
+.dreaunma-shortcode-example {
+	background: #f1f5f9;
+	padding: 16px;
+	border-radius: 8px;
+	border-left: 3px solid #6366f1;
+}
+
+.dreaunma-shortcode-example strong {
+	display: block;
+	margin-bottom: 8px;
+	color: #334155;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.dreaunma-shortcode-example code {
+	background: transparent;
+	color: #4f46e5;
+	font-size: 13px;
+	font-family: 'Fira Code', 'Courier New', monospace;
+	font-weight: 600;
+	border: none;
+	padding: 0;
+}
+
+.dreaunma-shortcodes-usage {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 30px;
+	margin-top: 40px;
+	box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.dreaunma-shortcodes-usage h2 {
+	margin-top: 0;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #f1f5f9;
+	color: #1e293b;
+}
+
+.dreaunma-usage-steps {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 25px;
+	margin-top: 25px;
+}
+
+.dreaunma-usage-step {
+	padding: 20px;
+	background: #f8fafc;
+	border-radius: 8px;
+	border-left: 3px solid #6366f1;
+	transition: transform 0.2s ease;
+}
+
+.dreaunma-usage-step:hover {
+	transform: translateY(-2px);
+}
+
+.dreaunma-usage-step h3 {
+	margin: 0 0 12px 0;
+	color: #334155;
+	font-size: 1.1em;
+	font-weight: 600;
+}
+
+.dreaunma-usage-step p {
+	margin: 0;
+	color: #64748b;
+	font-size: 14px;
+	line-height: 1.6;
+}

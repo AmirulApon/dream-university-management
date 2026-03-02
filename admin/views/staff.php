@@ -21,7 +21,7 @@ $has_filter_params = isset( $_GET['s'] ) || ( isset( $_GET['status'] ) && $_GET[
 
 if ( $is_action || $has_filter_params ) {
 	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-staff-view' ) ) {
-		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) );
+		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=dreaunma-staff' ) ) . '">' . esc_html__( 'Go Back', 'dream-university-management' ) . '</a>' );
 	}
 }
 

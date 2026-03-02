@@ -20,8 +20,8 @@ $is_action = isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'add'
 $has_filter_params = isset( $_GET['s'] ) || ( isset( $_GET['status'] ) && $_GET['status'] !== 'all' );
 
 if ( $is_action || $has_filter_params ) {
-	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-students-view' ) ) {
-		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) );
+	if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dreaunma-student-view' ) ) {
+		wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'dream-university-management' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=dreaunma-students' ) ) . '">' . esc_html__( 'Go Back', 'dream-university-management' ) . '</a>' );
 	}
 }
 
@@ -136,6 +136,22 @@ if ( $action === 'add' || $action === 'edit' ) {
 					</td>
 				</tr>
 				<tr>
+					<th><label for="session"><?php esc_html_e( 'Session', 'dream-university-management' ); ?></label></th>
+					<td><input type="text" id="session" name="session" value="<?php echo $student ? esc_attr( $student->session ) : ''; ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g., 2023-2024', 'dream-university-management' ); ?>"></td>
+				</tr>
+				<tr>
+					<th><label for="level"><?php esc_html_e( 'Level', 'dream-university-management' ); ?></label></th>
+					<td>
+						<select id="level" name="level">
+							<option value=""><?php esc_html_e( 'Select Level', 'dream-university-management' ); ?></option>
+							<option value="Level 1" <?php echo $student && $student->level === 'Level 1' ? 'selected' : ''; ?>><?php esc_html_e( 'Level 1', 'dream-university-management' ); ?></option>
+							<option value="Level 2" <?php echo $student && $student->level === 'Level 2' ? 'selected' : ''; ?>><?php esc_html_e( 'Level 2', 'dream-university-management' ); ?></option>
+							<option value="Level 3" <?php echo $student && $student->level === 'Level 3' ? 'selected' : ''; ?>><?php esc_html_e( 'Level 3', 'dream-university-management' ); ?></option>
+							<option value="Level 4" <?php echo $student && $student->level === 'Level 4' ? 'selected' : ''; ?>><?php esc_html_e( 'Level 4', 'dream-university-management' ); ?></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
 					<th><label for="admission_date"><?php esc_html_e( 'Admission Date', 'dream-university-management' ); ?></label></th>
 					<td><input type="date" id="admission_date" name="admission_date" value="<?php echo $student ? esc_attr( $student->admission_date ) : ''; ?>" class="regular-text"></td>
 				</tr>
@@ -207,14 +223,14 @@ if ( $action === 'add' || $action === 'edit' ) {
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Students', 'dream-university-management' ); ?></h1>
-		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-students&action=add' ), 'dreaunma-students-view' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
+		<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-students&action=add' ), 'dreaunma-student-view' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'dream-university-management' ); ?></a>
 		
 		<hr class="wp-header-end">
 		
 		<div class="dreaunma-search-box">
 			<form method="get" action="">
 				<input type="hidden" name="page" value="dreaunma-students">
-				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'dreaunma-students-view' ) ); ?>">
+				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'dreaunma-student-view' ) ); ?>">
 				<p class="search-box">
 					<label class="screen-reader-text" for="student-search-input"><?php esc_html_e( 'Search Students:', 'dream-university-management' ); ?></label>
 					<input type="search" id="student-search-input" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search by ID, name, or email...', 'dream-university-management' ); ?>">
@@ -241,6 +257,8 @@ if ( $action === 'add' || $action === 'edit' ) {
 					<th><?php esc_html_e( 'Email', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Faculty', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Department', 'dream-university-management' ); ?></th>
+					<th><?php esc_html_e( 'Session', 'dream-university-management' ); ?></th>
+					<th><?php esc_html_e( 'Level', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Phone', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Admission Date', 'dream-university-management' ); ?></th>
 					<th><?php esc_html_e( 'Status', 'dream-university-management' ); ?></th>
@@ -250,7 +268,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 			<tbody>
 				<?php if ( empty( $students ) ) : ?>
 					<tr>
-						<td colspan="11"><?php esc_html_e( 'No students found.', 'dream-university-management' ); ?></td>
+						<td colspan="13"><?php esc_html_e( 'No students found.', 'dream-university-management' ); ?></td>
 					</tr>
 				<?php else : ?>
 					<?php foreach ( $students as $student ) : ?>
@@ -281,6 +299,8 @@ if ( $action === 'add' || $action === 'edit' ) {
 							<td><?php echo esc_html( $student->email ); ?></td>
 							<td><?php echo esc_html( $faculty_name ); ?></td>
 							<td><?php echo esc_html( $department_name ); ?></td>
+							<td><?php echo esc_html( $student->session ); ?></td>
+							<td><?php echo esc_html( $student->level ); ?></td>
 							<td><?php echo esc_html( $student->phone ); ?></td>
 							<td><?php echo esc_html( $student->admission_date ); ?></td>
 							<td>
@@ -289,7 +309,7 @@ if ( $action === 'add' || $action === 'edit' ) {
 								</span>
 							</td>
 							<td>
-								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-students&action=edit&id=' . $student->id ), 'dreaunma-students-view' ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-students&action=edit&id=' . $student->id ), 'dreaunma-student-view' ) ); ?>"><?php esc_html_e( 'Edit', 'dream-university-management' ); ?></a> |
 								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=dreaunma_delete_student&id=' . $student->id ), 'dreaunma_delete_student' ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this student?', 'dream-university-management' ); ?>');"><?php esc_html_e( 'Delete', 'dream-university-management' ); ?></a>
 							</td>
 						</tr>

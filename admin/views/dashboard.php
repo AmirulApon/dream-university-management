@@ -77,16 +77,16 @@ $course_count = DREAUNMA_Course::count();
 		<div class="dreaunma-quick-actions">
 			<h2><?php esc_html_e( 'Quick Actions', 'dream-university-management' ); ?></h2>
 			<div class="dreaunma-action-buttons">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-students&action=add' ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-students&action=add' ), 'dreaunma-student-view' ) ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Add Student', 'dream-university-management' ); ?>
 				</a>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-teachers&action=add' ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-teachers&action=add' ), 'dreaunma-teacher-view' ) ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Add Teacher', 'dream-university-management' ); ?>
 				</a>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-courses&action=add' ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-courses&action=add' ), 'dreaunma-course-view' ) ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Add Course', 'dream-university-management' ); ?>
 				</a>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-enrollments&action=add' ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=dreaunma-enrollments&action=add' ), 'dreaunma-enrollments-view' ) ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Enroll Student', 'dream-university-management' ); ?>
 				</a>
 			</div>
