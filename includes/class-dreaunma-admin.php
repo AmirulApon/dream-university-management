@@ -193,6 +193,9 @@ class DREAUNMA_Admin {
 			return;
 		}
 		
+		// DataTables CSS
+		wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-html5-2.4.2/b-print-2.4.2/datatables.min.css', array(), '1.13.6' );
+
 		wp_enqueue_style(
 			'dreaunma-admin-style',
 			DREAUNMA_PLUGIN_URL . 'assets/css/admin.css',
@@ -200,10 +203,15 @@ class DREAUNMA_Admin {
 			DREAUNMA_VERSION
 		);
 		
+		// DataTables JS
+		wp_enqueue_script( 'pdfmake', 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js', array(), '0.2.7', true );
+		wp_enqueue_script( 'vfs_fonts', 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js', array('pdfmake'), '0.2.7', true );
+		wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-html5-2.4.2/b-print-2.4.2/datatables.min.js', array('jquery'), '1.13.6', true );
+
 		wp_enqueue_script(
 			'dreaunma-admin-script',
 			DREAUNMA_PLUGIN_URL . 'assets/js/admin.js',
-			array( 'jquery' ),
+			array( 'jquery', 'datatables' ),
 			DREAUNMA_VERSION,
 			true
 		);

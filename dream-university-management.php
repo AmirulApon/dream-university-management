@@ -3,7 +3,7 @@
  * Plugin Name: Dream University Management
  * Plugin URI: https://wordpress.org/plugins/dream-university-management
  * Description: A comprehensive university management system for WordPress. Manage students, teachers, staff, courses, enrollments, and calculate CGPA.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Dream Carnival
  * Author URI: https://profiles.wordpress.org/dreamscarnival/
  * License: GPL v2 or later
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'DREAUNMA_VERSION', '1.0.0' );
+define( 'DREAUNMA_VERSION', '1.0.1' );
 define( 'DREAUNMA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DREAUNMA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DREAUNMA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );

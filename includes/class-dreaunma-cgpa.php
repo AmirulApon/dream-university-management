@@ -103,9 +103,9 @@ class DREAUNMA_CGPA {
 	}
 	
 	/**
-	 * Get all students with CGPA, optionally filtered by faculty, department, or course
+	 * Get all students with CGPA, optionally filtered by faculty, department, course, session, or semester
 	 */
-	public static function get_all_students_cgpa( $faculty_id = 0, $department_id = 0, $course_id = 0 ) {
+	public static function get_all_students_cgpa( $faculty_id = 0, $department_id = 0, $course_id = 0, $session = '', $semester = '' ) {
 		global $wpdb;
 		$students_table = $wpdb->prefix . 'dreaunma_students';
 		
@@ -121,6 +121,11 @@ class DREAUNMA_CGPA {
 			$where[] = 'department_id = %d';
 			$params[] = $department_id;
 		}
+
+		if ( ! empty( $session ) ) {
+			$where[] = 'session = %s';
+			$params[] = $session;
+		}
 		
 		$where_clause = implode( ' AND ', $where );
 		$query = "SELECT * FROM $students_table WHERE $where_clause";
@@ -135,21 +140,36 @@ class DREAUNMA_CGPA {
 		
 		$results = array();
 		foreach ( $students as $student ) {
-			if ( $course_id > 0 ) {
-				// If filtering by course, calculate CGPA only for this specific course
+			if ( $course_id > 0 || ! empty( $semester ) ) {
+				// If filtering by course or semester, calculate GPA only for those specific conditions
 				$grades_table = $wpdb->prefix . 'dreaunma_grades';
 				$courses_table = $wpdb->prefix . 'dreaunma_courses';
 				
+				$course_where = array( "g.student_id = %d", "g.status = 'completed'" );
+				$course_params = array( $student->id );
+				
+				if ( $course_id > 0 ) {
+					$course_where[] = "g.course_id = %d";
+					$course_params[] = $course_id;
+				}
+				
+				if ( ! empty( $semester ) ) {
+					$course_where[] = "c.semester = %s";
+					$course_params[] = $semester;
+				}
+
+				$course_where_clause = implode( ' AND ', $course_where );
+
 				$course_query = "SELECT g.grade_point, c.credits
 						  FROM $grades_table g
 						  INNER JOIN $courses_table c ON g.course_id = c.id
-						  WHERE g.student_id = %d AND g.course_id = %d AND g.status = 'completed'";
+						  WHERE $course_where_clause";
 				
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				$course_results = $wpdb->get_results( $wpdb->prepare( $course_query, $student->id, $course_id ) );
+				$course_results = $wpdb->get_results( $wpdb->prepare( $course_query, ...$course_params ) );
 				
 				if ( empty( $course_results ) ) {
-					continue; // Skip student if they haven't completed this course
+					continue; // Skip student if they haven't completed any relevant courses
 				}
 				
 				$total_grade_points = 0;

@@ -120,6 +120,69 @@
 			$button.hide();
 		});
 		
+		// Initialize DataTables for tables with export options
+		if (typeof $.fn.DataTable !== 'undefined') {
+			$('.wp-list-table').each(function() {
+				var $table = $(this);
+				
+				// Skip if already a DataTable
+				if ($.fn.DataTable.isDataTable(this)) {
+					return;
+				}
+				
+				// Only initialize if the table has data rows
+				var $tbodyRows = $table.find('tbody tr');
+				var hasData = false;
+				
+				if ($tbodyRows.length > 0) {
+					// Check if it's just a "No students found" row (single td with colspan)
+					var $firstRowTds = $tbodyRows.first().find('td');
+					if (!($tbodyRows.length === 1 && $firstRowTds.length === 1 && $firstRowTds.attr('colspan'))) {
+						hasData = true;
+					}
+				}
+				
+				if (hasData && !$table.find('tbody tr td.dataTables_empty').length) {
+					// Check if table has more than 1 column to avoid initializing empty/message tables
+					if ($table.find('thead th, thead td').length > 1) {
+						$table.DataTable({
+							dom: 'Bfrtip',
+							buttons: [
+								{
+									extend: 'csv',
+									text: 'Export CSV',
+									className: 'button button-secondary',
+									exportOptions: {
+										// Exclude columns that typically contain action buttons
+										columns: ':not(:last-child):not(.column-actions):not(.no-export)'
+									}
+								},
+								{
+									extend: 'pdf',
+									text: 'Export PDF',
+									className: 'button button-secondary',
+									orientation: 'landscape',
+									exportOptions: {
+										// Exclude columns that typically contain action buttons
+										columns: ':not(:last-child):not(.column-actions):not(.no-export)'
+									}
+								}
+							],
+							pageLength: 25,
+							order: [], // Let WordPress default ordering stand
+							language: {
+								emptyTable: typeof dreaunmaAdmin !== 'undefined' && dreaunmaAdmin.i18n && dreaunmaAdmin.i18n.noData ? dreaunmaAdmin.i18n.noData : 'No data available in table'
+							},
+							// WordPress tables often have no-sort classes or action buttons we don't want to sort
+							columnDefs: [
+								{ targets: 'no-sort', orderable: false }
+							]
+						});
+					}
+				}
+			});
+		}
+		
 		console.log('Dream University Management admin scripts loaded');
 	});
 	

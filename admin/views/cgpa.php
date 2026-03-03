@@ -122,10 +122,23 @@ $students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 		$filter_department = isset( $_GET['filter_department'] ) ? intval( $_GET['filter_department'] ) : 0;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$filter_course = isset( $_GET['filter_course'] ) ? intval( $_GET['filter_course'] ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$filter_session = isset( $_GET['filter_session'] ) ? sanitize_text_field( wp_unslash( $_GET['filter_session'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$filter_semester = isset( $_GET['filter_semester'] ) ? sanitize_text_field( wp_unslash( $_GET['filter_semester'] ) ) : '';
 		
 		$faculties = DREAUNMA_Faculty::get_all( array( 'status' => 'active', 'limit' => 1000 ) );
 		$departments = $filter_faculty > 0 ? DREAUNMA_Department::get_by_faculty( $filter_faculty, 'active' ) : array();
 		$courses = DREAUNMA_Course::get_all( array( 'status' => 'active', 'limit' => 1000 ) );
+
+		// Fetch unique sessions
+		global $wpdb;
+		$students_table = $wpdb->prefix . 'dreaunma_students';
+		$sessions = $wpdb->get_col( "SELECT DISTINCT session FROM $students_table WHERE session != '' ORDER BY session DESC" );
+		
+		// Fetch unique semesters
+		$courses_table = $wpdb->prefix . 'dreaunma_courses';
+		$semesters = $wpdb->get_col( "SELECT DISTINCT semester FROM $courses_table WHERE semester != '' ORDER BY CAST(semester AS UNSIGNED) ASC, semester ASC" );
 		?>
 		
 		<div class="dreaunma-filter-box" style="margin-bottom: 20px; padding: 15px; background: #fff; border: 1px solid #ccd0d4; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
@@ -172,8 +185,32 @@ $students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 					</div>
 					
 					<div>
+						<label for="filter_session" style="display: block; margin-bottom: 5px; font-weight: 600;"><?php esc_html_e( 'Session', 'dream-university-management' ); ?></label>
+						<select name="filter_session" id="filter_session" onchange="this.form.submit()">
+							<option value=""><?php esc_html_e( 'All Sessions', 'dream-university-management' ); ?></option>
+							<?php foreach ( $sessions as $session ) : ?>
+								<option value="<?php echo esc_attr( $session ); ?>" <?php selected( $filter_session, $session ); ?>>
+									<?php echo esc_html( $session ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+
+					<div>
+						<label for="filter_semester" style="display: block; margin-bottom: 5px; font-weight: 600;"><?php esc_html_e( 'Semester', 'dream-university-management' ); ?></label>
+						<select name="filter_semester" id="filter_semester" onchange="this.form.submit()">
+							<option value=""><?php esc_html_e( 'All Semesters', 'dream-university-management' ); ?></option>
+							<?php foreach ( $semesters as $semester ) : ?>
+								<option value="<?php echo esc_attr( $semester ); ?>" <?php selected( $filter_semester, $semester ); ?>>
+									<?php echo esc_html( sprintf( __( 'Semester %s', 'dream-university-management' ), $semester ) ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					
+					<div>
 						<?php submit_button( __( 'Filter', 'dream-university-management' ), 'secondary', 'filter_action', false ); ?>
-						<?php if ( $filter_faculty > 0 || $filter_department > 0 || $filter_course > 0 ) : ?>
+						<?php if ( $filter_faculty > 0 || $filter_department > 0 || $filter_course > 0 || ! empty( $filter_session ) || ! empty( $filter_semester ) ) : ?>
 							<a href="<?php echo esc_url( admin_url( 'admin.php?page=dreaunma-cgpa' ) ); ?>" class="button"><?php esc_html_e( 'Clear Options', 'dream-university-management' ); ?></a>
 						<?php endif; ?>
 					</div>
@@ -182,39 +219,56 @@ $students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 		</div>
 
 		<?php
-		$all_cgpa = DREAUNMA_CGPA::get_all_students_cgpa( $filter_faculty, $filter_department, $filter_course );
+		$all_cgpa = DREAUNMA_CGPA::get_all_students_cgpa( $filter_faculty, $filter_department, $filter_course, $filter_session, $filter_semester );
 		
-		// If filtering by course, we should display the average course GPA at the top
-		if ( $filter_course > 0 && ! empty( $all_cgpa ) ) {
-			$total_course_cgpa = 0;
-			$student_count = count( $all_cgpa );
+		// Display average GPA context based on filters
+		if ( ( $filter_course > 0 || ! empty( $filter_semester ) || ! empty( $filter_session ) ) && ! empty( $all_cgpa ) ) {
+			$total_filtered_cgpa = 0;
+			$student_count       = count( $all_cgpa );
 			
 			foreach ( $all_cgpa as $item ) {
-				$total_course_cgpa += $item['cgpa'];
+				$total_filtered_cgpa += $item['cgpa'];
 			}
 			
-			$avg_course_cgpa = $student_count > 0 ? round( $total_course_cgpa / $student_count, 2 ) : 0.00;
+			$avg_filtered_cgpa = $student_count > 0 ? round( $total_filtered_cgpa / $student_count, 2 ) : 0.00;
 			
-			$selected_course_name = '';
-			foreach ( $courses as $c ) {
-				if ( (int) $c->id === $filter_course ) {
-					$selected_course_name = $c->course_code . ' - ' . $c->course_name;
-					break;
+			$filter_context_name = '';
+			if ( $filter_course > 0 ) {
+				foreach ( $courses as $c ) {
+					if ( (int) $c->id === $filter_course ) {
+						$filter_context_name = esc_html__( 'Course Average:', 'dream-university-management' ) . ' ' . $c->course_code . ' - ' . $c->course_name;
+						break;
+					}
 				}
+			} elseif ( ! empty( $filter_semester ) ) {
+				$filter_context_name = esc_html__( 'Semester Average:', 'dream-university-management' ) . ' ' . sprintf( __( 'Semester %s', 'dream-university-management' ), $filter_semester );
+				if ( ! empty( $filter_session ) ) {
+					$filter_context_name .= ' (' . esc_html( $filter_session ) . ')';
+				}
+			} elseif ( ! empty( $filter_session ) ) {
+				$filter_context_name = esc_html__( 'Session Average:', 'dream-university-management' ) . ' ' . esc_html( $filter_session );
 			}
-			?>
-			<div class="notice notice-info" style="margin-top: 15px; margin-bottom: 20px;">
-				<p>
-					<strong><?php esc_html_e( 'Course Average:', 'dream-university-management' ); ?></strong> 
-					<?php echo esc_html( $selected_course_name ); ?> - 
-					<span style="font-size: 16px; font-weight: bold; color: #007cba;"><?php echo esc_html( $avg_course_cgpa ); ?></span>
-					(<?php echo esc_html( sprintf( _n( '%s student', '%s students', $student_count, 'dream-university-management' ), number_format_i18n( $student_count ) ) ); ?>)
-				</p>
-			</div>
-			<?php
+			
+			if ( ! empty( $filter_context_name ) ) {
+				?>
+				<div class="notice notice-info" style="margin-top: 15px; margin-bottom: 20px;">
+					<p>
+						<strong><?php echo esc_html( $filter_context_name ); ?></strong> 
+						<span style="font-size: 16px; font-weight: bold; color: #007cba; margin-left:10px;"><?php echo esc_html( $avg_filtered_cgpa ); ?></span>
+						(<?php echo esc_html( sprintf( _n( '%s student', '%s students', $student_count, 'dream-university-management' ), number_format_i18n( $student_count ) ) ); ?>)
+					</p>
+				</div>
+				<?php
+			}
 		}
 
 		if ( ! empty( $all_cgpa ) ) :
+			$gpa_column_label = esc_html__( 'CGPA', 'dream-university-management' );
+			if ( $filter_course > 0 ) {
+				$gpa_column_label = esc_html__( 'Course GPA', 'dream-university-management' );
+			} elseif ( ! empty( $filter_semester ) ) {
+				$gpa_column_label = esc_html__( 'SGPA (Semester)', 'dream-university-management' );
+			}
 			?>
 			<table class="wp-list-table widefat fixed striped">
 				<thead>
@@ -222,7 +276,7 @@ $students = DREAUNMA_Student::get_all( array( 'status' => 'active' ) );
 						<th><?php esc_html_e( 'Rank', 'dream-university-management' ); ?></th>
 						<th><?php esc_html_e( 'Student ID', 'dream-university-management' ); ?></th>
 						<th><?php esc_html_e( 'Name', 'dream-university-management' ); ?></th>
-						<th><?php echo $filter_course > 0 ? esc_html_e( 'Course GPA', 'dream-university-management' ) : esc_html_e( 'CGPA', 'dream-university-management' ); ?></th>
+						<th><?php echo $gpa_column_label; ?></th>
 						<th><?php esc_html_e( 'Credits Counted', 'dream-university-management' ); ?></th>
 					</tr>
 				</thead>

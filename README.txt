@@ -4,7 +4,7 @@ Tags: university management, school management, student management, course manag
 Requires at least: 6.3
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,13 @@ Currently, the plugin is admin-only. Future versions may include student and tea
 
 == Changelog ==
 
+= 1.0.1 =
+* Added Session and Semester filters to the CGPA calculator
+* Added Session and Level fields to Student profiles
+* Added DataTables integration for CSV and PDF exports across all listing tables
+* Fixed UI alignment issues in the viewing areas
+* Enhanced overall backend security with reinforced nonce validation
+
 = 1.0.0 =
 * Initial release
 * Student management
@@ -100,6 +107,9 @@ Currently, the plugin is admin-only. Future versions may include student and tea
 * Reports and statistics
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Minor update providing advanced CGPA filters, new data export capabilities, and crucial backend security fixes.
 
 = 1.0.0 =
 Initial release of Dream University Management plugin.

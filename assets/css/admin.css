@@ -1469,3 +1469,17 @@ select {
 	font-size: 14px;
 	line-height: 1.6;
 }
+
+/* DataTables Custom Styles for WordPress */
+.dataTables_wrapper .dt-buttons {
+    margin-bottom: 10px;
+}
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 10px;
+}
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 15px;
+}
+.dataTables_wrapper .dataTables_info {
+    margin-top: 15px;
+}
